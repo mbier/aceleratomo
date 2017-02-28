@@ -10,12 +10,24 @@ import (
 
 func main() {
 	r := mux.NewRouter()
-	r.HandleFunc("/", homeHandler).Methods("GET")
+	r.HandleFunc("/track", quadroTrackHandler).Methods("GET")
+	r.HandleFunc("/tms-web", quadroTMSWEBHandler).Methods("GET")
+	r.HandleFunc("/quadro-geral", quadroGeralHandler).Methods("GET")
 	http.Handle("/", r)
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
 
-func homeHandler(w http.ResponseWriter, r *http.Request) {
+func quadroTrackHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, acelerato.GerarQuadro())
+	fmt.Fprintf(w, acelerato.GerarQuadroTrack())
+}
+
+func quadroTMSWEBHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, acelerato.GerarQuadroTMSWEB())
+}
+
+func quadroGeralHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, acelerato.GerarQuadroGeral())
 }
