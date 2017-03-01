@@ -12,6 +12,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", homeHandler).Methods("GET")
 	r.HandleFunc("/track", quadroTrackHandler).Methods("GET")
+	r.HandleFunc("/adm", quadroAdmHandler).Methods("GET")
 	r.HandleFunc("/tms-web", quadroTMSWEBHandler).Methods("GET")
 	r.HandleFunc("/smo-net", quadroSMONETHandler).Methods("GET")
 	r.HandleFunc("/smo-web", quadroSMOWEBHandler).Methods("GET")
@@ -23,6 +24,7 @@ func main() {
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "/track \n" +
+		"/adm \n" +
 		"/tms-web \n" +
 		"/smo-net \n" +
 		"/smo-web \n")
@@ -31,6 +33,11 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 func quadroTrackHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, acelerato.GerarQuadroTrack())
+}
+
+func quadroAdmHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, acelerato.GerarQuadroAdm())
 }
 
 func quadroTMSWEBHandler(w http.ResponseWriter, r *http.Request) {
