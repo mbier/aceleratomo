@@ -9,12 +9,14 @@ import (
 	"bytes"
 )
 
-func getDemandasTrack() []Demanda {
+var usuario string = "marlon.bier@mosistemas.com"
+var token string = "5cGDISvo1gM2Gi7tO7G+jA=="
+
+func getDemandas(url string) []Demanda {
 	client := &http.Client{}
 
-	url := "https://mosistemas.acelerato.com/api/demandas?projetos=2&categorias=20,22"
 	req, err := http.NewRequest("GET", url, nil)
-	req.SetBasicAuth("marlon.bier@mosistemas.com", "5cGDISvo1gM2Gi7tO7G+jA==")
+	req.SetBasicAuth(usuario, token)
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatal(err)
@@ -30,121 +32,62 @@ func getDemandasTrack() []Demanda {
 	json.Unmarshal(responseData, &demandas)
 
 	return demandas
+}
+
+func getDemandasTrack() []Demanda {
+
+	url := "https://mosistemas.acelerato.com/api/demandas?projetos=2&categorias=20,22"
+
+	return getDemandas(url)
 }
 
 func getDemandasAdm() []Demanda {
-	client := &http.Client{}
 
 	url := "https://mosistemas.acelerato.com/api/demandas?projetos=11&categorias=26"
-	req, err := http.NewRequest("GET", url, nil)
-	req.SetBasicAuth("marlon.bier@mosistemas.com", "5cGDISvo1gM2Gi7tO7G+jA==")
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
 
-	responseData, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var demandas []Demanda
-
-	json.Unmarshal(responseData, &demandas)
-
-	return demandas
+	return getDemandas(url)
 }
 
 func getDemandasTMSWEB() []Demanda {
-	client := &http.Client{}
 
 	url := "https://mosistemas.acelerato.com/api/demandas?projetos=4&categorias=15"
-	req, err := http.NewRequest("GET", url, nil)
-	req.SetBasicAuth("marlon.bier@mosistemas.com", "5cGDISvo1gM2Gi7tO7G+jA==")
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
 
-	responseData, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var demandas []Demanda
-
-	json.Unmarshal(responseData, &demandas)
-
-	return demandas
+	return getDemandas(url)
 }
 
 func getDemandasSMOWEB() []Demanda {
-	client := &http.Client{}
 
 	url := "https://mosistemas.acelerato.com/api/demandas?projetos=4&categorias=16"
-	req, err := http.NewRequest("GET", url, nil)
-	req.SetBasicAuth("marlon.bier@mosistemas.com", "5cGDISvo1gM2Gi7tO7G+jA==")
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
 
-	responseData, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var demandas []Demanda
-
-	json.Unmarshal(responseData, &demandas)
-
-	return demandas
+	return getDemandas(url)
 }
 
 func getDemandasSMOFrete() []Demanda {
-	client := &http.Client{}
 
 	url := "https://mosistemas.acelerato.com/api/demandas?projetos=4&categorias=22"
-	req, err := http.NewRequest("GET", url, nil)
-	req.SetBasicAuth("marlon.bier@mosistemas.com", "5cGDISvo1gM2Gi7tO7G+jA==")
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
 
-	responseData, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var demandas []Demanda
-
-	json.Unmarshal(responseData, &demandas)
-
-	return demandas
+	return getDemandas(url)
 }
 
 func getDemandasSMONET() []Demanda {
-	client := &http.Client{}
 
 	url := "https://mosistemas.acelerato.com/api/demandas?projetos=4&categorias=22"
-	req, err := http.NewRequest("GET", url, nil)
-	req.SetBasicAuth("marlon.bier@mosistemas.com", "5cGDISvo1gM2Gi7tO7G+jA==")
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
 
-	responseData, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
+	return getDemandas(url)
+}
 
-	var demandas []Demanda
+func getDemandasSMOCTE() []Demanda {
 
-	json.Unmarshal(responseData, &demandas)
+	url := "https://mosistemas.acelerato.com/api/demandas?projetos=4&categorias=16"
 
-	return demandas
+	return getDemandas(url)
+}
+
+func getDemandasLogrev() []Demanda {
+
+	url := "https://mosistemas.acelerato.com/api/demandas?projetos=2&categorias=25"
+
+	return getDemandas(url)
 }
 
 func GerarQuadroTrack() string {
@@ -197,11 +140,24 @@ func GerarQuadroSMOWEB() string {
 	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria)
 }
 
+func GerarQuadroSMOCTE() string {
+	demandas := getDemandasSMOCTE()
+
+	testeFiltro := []int{19, 20}
+
+	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria := gerarQuadro(demandas, testeFiltro)
+
+	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria)
+}
+
+
 func GerarQuadroGeral() string {
+	demandasSmocte := getDemandasSMOCTE()
 	demandasTmsweb := getDemandasTMSWEB()
 	demandasSmonet := getDemandasSMONET()
 	demandasTrack := getDemandasTrack()
 	demandasAdm := getDemandasAdm()
+	demandasLogrev := getDemandasLogrev()
 
 	testeFiltroTrack := []int{10, 11}
 	testeFiltroFlex := []int{10, 11}
@@ -210,27 +166,29 @@ func GerarQuadroGeral() string {
 	qtdBacklogProblemaAdm, qtdBacklogMelhoriaAdm, qtdTesteProblemaAdm, qtdTesteMelhoriaAdm := gerarQuadro(demandasAdm, testeFiltroTrack)
 	qtdBacklogProblemaTmsweb, qtdBacklogMelhoriaTmsweb, qtdTesteProblemaTmsweb, qtdTesteMelhoriaTmsweb := gerarQuadro(demandasTmsweb, testeFiltroFlex)
 	qtdBacklogProblemaSmonet, qtdBacklogMelhoriaSmonet, qtdTesteProblemaSmonet, qtdTesteMelhoriaSmonet := gerarQuadro(demandasSmonet, testeFiltroFlex)
+	qtdBacklogProblemaSmocte, qtdBacklogMelhoriaSmocte, qtdTesteProblemaSmocte, qtdTesteMelhoriaSmocte := gerarQuadro(demandasSmocte, testeFiltroFlex)
+	qtdBacklogProblemaLogrev, qtdBacklogMelhoriaLogrev, qtdTesteProblemaLogrev, qtdTesteMelhoriaLogrev := gerarQuadro(demandasLogrev, testeFiltroFlex)
 
 	qtdBacklogProblema := 0
 	qtdBacklogMelhoria := 0
 	qtdTesteProblema := 0
 	qtdTesteMelhoria := 0
 
-	qtdBacklogProblemaGeral := qtdBacklogProblemaTrack + qtdBacklogProblemaTmsweb + qtdBacklogProblemaSmonet+qtdBacklogProblemaAdm
-	qtdBacklogMelhoriaGeral := qtdBacklogMelhoriaTrack + qtdBacklogMelhoriaTmsweb + qtdBacklogMelhoriaSmonet+qtdBacklogMelhoriaAdm
-	qtdTesteProblemaGeral := qtdTesteProblemaTrack + qtdTesteProblemaTmsweb + qtdTesteProblemaSmonet+qtdTesteProblemaAdm
-	qtdTesteMelhoriaGeral := qtdTesteMelhoriaTrack + qtdTesteMelhoriaTmsweb + qtdTesteMelhoriaSmonet+qtdTesteMelhoriaAdm
+	qtdBacklogProblemaGeral := qtdBacklogProblemaTrack + qtdBacklogProblemaTmsweb + qtdBacklogProblemaSmonet + qtdBacklogProblemaAdm + qtdBacklogProblemaSmocte+qtdBacklogProblemaLogrev
+	qtdBacklogMelhoriaGeral := qtdBacklogMelhoriaTrack + qtdBacklogMelhoriaTmsweb + qtdBacklogMelhoriaSmonet + qtdBacklogMelhoriaAdm + qtdBacklogMelhoriaSmocte+qtdBacklogMelhoriaLogrev
+	qtdTesteProblemaGeral := qtdTesteProblemaTrack + qtdTesteProblemaTmsweb + qtdTesteProblemaSmonet + qtdTesteProblemaAdm + qtdTesteProblemaSmocte+qtdTesteProblemaLogrev
+	qtdTesteMelhoriaGeral := qtdTesteMelhoriaTrack + qtdTesteMelhoriaTmsweb + qtdTesteMelhoriaSmonet + qtdTesteMelhoriaAdm + qtdTesteMelhoriaSmocte+qtdTesteMelhoriaLogrev
 
 	var buffer bytes.Buffer
 
 	buffer.WriteString("<table style=\"width:100%\">")
 	buffer.WriteString("<tr><th>Produto</th><th>Melhoria</th><th>Problema</th><th>AG. Teste</th><th>Total</th><th>&#37; Melhoria</th><th>&#37; Problema</th></tr>")
 
-	buffer.WriteString(gerarQuadroGeralItem("SMOCTE", qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria))
+	buffer.WriteString(gerarQuadroGeralItem("SMOCTE", qtdBacklogProblemaSmocte, qtdBacklogMelhoriaSmocte, qtdTesteProblemaSmocte, qtdTesteMelhoriaSmocte))
 	buffer.WriteString(gerarQuadroGeralItem("SMOTMS", qtdBacklogProblemaTmsweb, qtdBacklogMelhoriaTmsweb, qtdTesteProblemaTmsweb, qtdTesteMelhoriaTmsweb))
 	buffer.WriteString(gerarQuadroGeralItem("ADM", qtdBacklogProblemaAdm, qtdBacklogMelhoriaAdm, qtdTesteProblemaAdm, qtdTesteMelhoriaAdm))
 	buffer.WriteString(gerarQuadroGeralItem("SMO-FRETE", qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria))
-	buffer.WriteString(gerarQuadroGeralItem("LOGREV", qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria))
+	buffer.WriteString(gerarQuadroGeralItem("LOGREV", qtdBacklogProblemaLogrev, qtdBacklogMelhoriaLogrev, qtdTesteProblemaLogrev, qtdTesteMelhoriaLogrev))
 	buffer.WriteString(gerarQuadroGeralItem("SMONET", qtdBacklogProblemaSmonet, qtdBacklogMelhoriaSmonet, qtdTesteProblemaSmonet, qtdTesteMelhoriaSmonet))
 	buffer.WriteString(gerarQuadroGeralItem("TRACK", qtdBacklogProblemaTrack, qtdBacklogMelhoriaTrack, qtdTesteProblemaTrack, qtdTesteMelhoriaTrack))
 	buffer.WriteString(gerarQuadroGeralItem("Total", qtdBacklogProblemaGeral, qtdBacklogMelhoriaGeral, qtdTesteProblemaGeral, qtdTesteMelhoriaGeral))
