@@ -7,16 +7,23 @@ import (
 	"io/ioutil"
 	"strconv"
 	"bytes"
+	"github.com/mbier/aceleratomo/models"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
+	"github.com/mbier/aceleratomo/mongo"
+	"time"
 )
 
-var usuario string = "marlon.bier@mosistemas.com"
-var token string = "5cGDISvo1gM2Gi7tO7G+jA=="
+const (
+	Usuario string = "marlon.bier@mosistemas.com"
+	Token string = "5cGDISvo1gM2Gi7tO7G+jA=="
+)
 
-func getDemandas(url string) []Demanda {
+func getDemandas(url string) []models.Demanda {
 	client := &http.Client{}
 
 	req, err := http.NewRequest("GET", url, nil)
-	req.SetBasicAuth(usuario, token)
+	req.SetBasicAuth(Usuario, Token)
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatal(err)
@@ -27,129 +34,152 @@ func getDemandas(url string) []Demanda {
 		log.Fatal(err)
 	}
 
-	var demandas []Demanda
+	var demandas []models.Demanda
 
 	json.Unmarshal(responseData, &demandas)
 
 	return demandas
 }
 
-func getDemandasTrack() []Demanda {
+func getDemandasTrack() []models.Demanda {
 
 	url := "https://mosistemas.acelerato.com/api/demandas?projetos=2&categorias=20,22"
 
 	return getDemandas(url)
 }
 
-func getDemandasAdm() []Demanda {
+func getDemandasAdm() []models.Demanda {
 
 	url := "https://mosistemas.acelerato.com/api/demandas?projetos=11&categorias=26"
 
 	return getDemandas(url)
 }
 
-func getDemandasTMSWEB() []Demanda {
+func getDemandasTMSWEB() []models.Demanda {
 
 	url := "https://mosistemas.acelerato.com/api/demandas?projetos=4&categorias=15"
 
 	return getDemandas(url)
 }
 
-func getDemandasSMOWEB() []Demanda {
+func getDemandasSMOWEB() []models.Demanda {
 
 	url := "https://mosistemas.acelerato.com/api/demandas?projetos=4&categorias=16"
 
 	return getDemandas(url)
 }
 
-func getDemandasSMOFrete() []Demanda {
+func getDemandasSMOFrete() []models.Demanda {
 
 	url := "https://mosistemas.acelerato.com/api/demandas?projetos=4&categorias=22"
 
 	return getDemandas(url)
 }
 
-func getDemandasSMONET() []Demanda {
+func getDemandasSMONET() []models.Demanda {
 
 	url := "https://mosistemas.acelerato.com/api/demandas?projetos=4&categorias=22"
 
 	return getDemandas(url)
 }
 
-func getDemandasSMOCTE() []Demanda {
+func getDemandasSMOCTE() []models.Demanda {
 
 	url := "https://mosistemas.acelerato.com/api/demandas?projetos=4&categorias=16"
 
 	return getDemandas(url)
 }
 
-func getDemandasLogrev() []Demanda {
+func getDemandasLogrev() []models.Demanda {
 
 	url := "https://mosistemas.acelerato.com/api/demandas?projetos=2&categorias=25"
 
 	return getDemandas(url)
 }
 
-func GerarQuadroTrack() string {
-	demandas := getDemandasTrack()
+func GerarQuadroTrack(mongoSession *mgo.Session) string {
 
-	testeFiltro := []int{10, 11}
-
-	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria := gerarQuadro(demandas, testeFiltro)
+	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria := GerarDadosQuadroTrack(mongoSession)
 
 	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria)
 }
 
-func GerarQuadroAdm() string {
+//func ValidarGravacaoAutoTrack(mongoSession *mgo.Session) bool {
+//	var date time.Time = time.Now()
+//	return mongoSession.DB(mongo.AuthDatabase).C("projeto_dados").Find(bson.M{"tipo_projeto": models.TRACK, "data_geracao": {"$gte": "new Date(2017-03-12)"}}).Count() > 0
+//}
+
+func GerarDadosQuadroTrack(mongoSession *mgo.Session) (qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria int) {
+	demandas := getDemandasTrack()
+
+	testeFiltro := []int{10, 11}
+
+	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria = gerarQuadro(demandas, testeFiltro)
+
+	gravarProjetoDados(mongoSession, models.TRACK, qtdBacklogMelhoria, qtdBacklogProblema, qtdTesteMelhoria, qtdTesteProblema)
+
+	return
+}
+
+func GerarQuadroAdm(mongoSession *mgo.Session) string {
 	demandas := getDemandasAdm()
 
 	testeFiltro := []int{10, 11}
 
 	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria := gerarQuadro(demandas, testeFiltro)
 
+	gravarProjetoDados(mongoSession, models.ADM, qtdBacklogMelhoria, qtdBacklogProblema, qtdTesteMelhoria, qtdTesteProblema)
+
 	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria)
 }
 
-func GerarQuadroTMSWEB() string {
+func GerarQuadroTMSWEB(mongoSession *mgo.Session) string {
 	demandas := getDemandasTMSWEB()
 
 	testeFiltro := []int{19, 20}
 
 	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria := gerarQuadro(demandas, testeFiltro)
 
+	gravarProjetoDados(mongoSession, models.TMS_WEB, qtdBacklogMelhoria, qtdBacklogProblema, qtdTesteMelhoria, qtdTesteProblema)
+
 	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria)
 }
 
-func GerarQuadroSMONET() string {
+func GerarQuadroSMONET(mongoSession *mgo.Session) string {
 	demandas := getDemandasSMONET()
 
 	testeFiltro := []int{19, 20}
 
 	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria := gerarQuadro(demandas, testeFiltro)
 
+	gravarProjetoDados(mongoSession, models.SMO_NET, qtdBacklogMelhoria, qtdBacklogProblema, qtdTesteMelhoria, qtdTesteProblema)
+
 	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria)
 }
 
-func GerarQuadroSMOWEB() string {
+func GerarQuadroSMOWEB(mongoSession *mgo.Session) string {
 	demandas := getDemandasSMOWEB()
 
 	testeFiltro := []int{19, 20}
 
 	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria := gerarQuadro(demandas, testeFiltro)
 
+	gravarProjetoDados(mongoSession, models.SMO_WEB, qtdBacklogMelhoria, qtdBacklogProblema, qtdTesteMelhoria, qtdTesteProblema)
+
 	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria)
 }
 
-func GerarQuadroSMOCTE() string {
+func GerarQuadroSMOCTE(mongoSession *mgo.Session) string {
 	demandas := getDemandasSMOCTE()
 
 	testeFiltro := []int{19, 20}
 
 	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria := gerarQuadro(demandas, testeFiltro)
 
+	gravarProjetoDados(mongoSession, models.SMO_CTE, qtdBacklogMelhoria, qtdBacklogProblema, qtdTesteMelhoria, qtdTesteProblema)
+
 	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria)
 }
-
 
 func GerarQuadroGeral() string {
 	demandasSmocte := getDemandasSMOCTE()
@@ -174,10 +204,10 @@ func GerarQuadroGeral() string {
 	qtdTesteProblema := 0
 	qtdTesteMelhoria := 0
 
-	qtdBacklogProblemaGeral := qtdBacklogProblemaTrack + qtdBacklogProblemaTmsweb + qtdBacklogProblemaSmonet + qtdBacklogProblemaAdm + qtdBacklogProblemaSmocte+qtdBacklogProblemaLogrev
-	qtdBacklogMelhoriaGeral := qtdBacklogMelhoriaTrack + qtdBacklogMelhoriaTmsweb + qtdBacklogMelhoriaSmonet + qtdBacklogMelhoriaAdm + qtdBacklogMelhoriaSmocte+qtdBacklogMelhoriaLogrev
-	qtdTesteProblemaGeral := qtdTesteProblemaTrack + qtdTesteProblemaTmsweb + qtdTesteProblemaSmonet + qtdTesteProblemaAdm + qtdTesteProblemaSmocte+qtdTesteProblemaLogrev
-	qtdTesteMelhoriaGeral := qtdTesteMelhoriaTrack + qtdTesteMelhoriaTmsweb + qtdTesteMelhoriaSmonet + qtdTesteMelhoriaAdm + qtdTesteMelhoriaSmocte+qtdTesteMelhoriaLogrev
+	qtdBacklogProblemaGeral := qtdBacklogProblemaTrack + qtdBacklogProblemaTmsweb + qtdBacklogProblemaSmonet + qtdBacklogProblemaAdm + qtdBacklogProblemaSmocte + qtdBacklogProblemaLogrev
+	qtdBacklogMelhoriaGeral := qtdBacklogMelhoriaTrack + qtdBacklogMelhoriaTmsweb + qtdBacklogMelhoriaSmonet + qtdBacklogMelhoriaAdm + qtdBacklogMelhoriaSmocte + qtdBacklogMelhoriaLogrev
+	qtdTesteProblemaGeral := qtdTesteProblemaTrack + qtdTesteProblemaTmsweb + qtdTesteProblemaSmonet + qtdTesteProblemaAdm + qtdTesteProblemaSmocte + qtdTesteProblemaLogrev
+	qtdTesteMelhoriaGeral := qtdTesteMelhoriaTrack + qtdTesteMelhoriaTmsweb + qtdTesteMelhoriaSmonet + qtdTesteMelhoriaAdm + qtdTesteMelhoriaSmocte + qtdTesteMelhoriaLogrev
 
 	var buffer bytes.Buffer
 
@@ -214,7 +244,7 @@ func gerarQuadroGeralItem(produto string, qtdBacklogProblema, qtdBacklogMelhoria
 	return buffer.String()
 }
 
-func gerarQuadro(demandas []Demanda, testeFilter[]int) (qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria int) {
+func gerarQuadro(demandas []models.Demanda, testeFilter[]int) (qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria int) {
 	qtdBacklogProblema = 0
 	qtdBacklogMelhoria = 0
 	qtdTesteProblema = 0
@@ -263,4 +293,20 @@ func gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema,
 	buffer.WriteString("Total Melhoria............:" + strconv.Itoa(qtdTesteMelhoria + qtdBacklogMelhoria) + "\n")
 
 	return buffer.String()
+}
+func gravarProjetoDados(mongoSession *mgo.Session, tipoProjeto models.TipoProjeto, qtdBacklogMelhoria, qtdBacklogProblema, qtdTesteMelhoria, qtdTesteProblema int) {
+	projeto := models.Projeto{}
+
+	projeto.ID = bson.NewObjectId()
+	projeto.Data = time.Now()
+	projeto.TipoProjeto = tipoProjeto
+	projeto.QtdBacklogMelhoria = qtdBacklogMelhoria
+	projeto.QtdBacklogProblema = qtdBacklogProblema
+	projeto.QtdTesteMelhoria = qtdTesteMelhoria
+	projeto.QtdTesteProblema = qtdTesteProblema
+
+	err := mongoSession.DB(mongo.AuthDatabase).C("projeto_dados").Insert(projeto)
+	if err != nil {
+		log.Println(err)
+	}
 }

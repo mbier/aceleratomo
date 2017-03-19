@@ -1,61 +1,32 @@
 package main
 
 import (
-	"github.com/mbier/aceleratomo/acelerato"
 	"github.com/gorilla/mux"
 	"net/http"
-	"fmt"
 	"log"
+	"github.com/mbier/aceleratomo/handlers"
 )
 
 func main() {
+
+	//mongoSession := mongo.GetMongoSession()
+
+	//h := handlers.NewHandlerQuadro(mongoSession)
+	h := handlers.NewHandlerQuadro(nil)
+
 	r := mux.NewRouter()
-	r.HandleFunc("/", homeHandler).Methods("GET")
-	r.HandleFunc("/track", quadroTrackHandler).Methods("GET")
-	r.HandleFunc("/adm", quadroAdmHandler).Methods("GET")
-	r.HandleFunc("/tms-web", quadroTMSWEBHandler).Methods("GET")
-	r.HandleFunc("/smo-net", quadroSMONETHandler).Methods("GET")
-	r.HandleFunc("/smo-web", quadroSMOWEBHandler).Methods("GET")
-	r.HandleFunc("/quadro-geral", quadroGeralHandler).Methods("GET")
+	r.HandleFunc("/", handlers.Raiz).Methods("GET")
+	r.HandleFunc("/track", h.QuadroTrack).Methods("GET")
+	r.HandleFunc("/adm", h.QuadroAdm).Methods("GET")
+	r.HandleFunc("/tms-web", h.QuadroTMSWEB).Methods("GET")
+	r.HandleFunc("/smo-net", h.QuadroSMONET).Methods("GET")
+	r.HandleFunc("/smo-web", h.QuadroSMOWEB).Methods("GET")
+	r.HandleFunc("/smo-cte", h.QuadroSMOCTE).Methods("GET")
+	r.HandleFunc("/quadro-geral", handlers.QuadroGeral).Methods("GET")
 	http.Handle("/", r)
 	log.Fatal(http.ListenAndServe(":6969", r))
 }
 
-func homeHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "/track \n" +
-		"/adm \n" +
-		"/tms-web \n" +
-		"/smo-net \n" +
-		"/smo-web \n")
-}
 
-func quadroTrackHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, acelerato.GerarQuadroTrack())
-}
 
-func quadroAdmHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, acelerato.GerarQuadroAdm())
-}
 
-func quadroTMSWEBHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, acelerato.GerarQuadroTMSWEB())
-}
-
-func quadroSMONETHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, acelerato.GerarQuadroSMONET())
-}
-
-func quadroSMOWEBHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, acelerato.GerarQuadroSMOWEB())
-}
-
-func quadroGeralHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, acelerato.GerarQuadroGeral())
-}

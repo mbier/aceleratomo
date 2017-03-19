@@ -1,5 +1,4 @@
-// Demanda do acelerato
-package acelerato
+package models
 
 // Demanda objeto de retorno da demanda do acelerato
 type Demanda struct {
