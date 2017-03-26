@@ -295,6 +295,10 @@ func gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema,
 	return buffer.String()
 }
 func gravarProjetoDados(mongoSession *mgo.Session, tipoProjeto models.TipoProjeto, qtdBacklogMelhoria, qtdBacklogProblema, qtdTesteMelhoria, qtdTesteProblema int) {
+	if mongoSession == nil{
+		return
+	}
+
 	projeto := models.Projeto{}
 
 	projeto.ID = bson.NewObjectId()
