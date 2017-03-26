@@ -27,7 +27,7 @@ func main() {
 	http.Handle("/", r)
 
 	var port string = os.Getenv("PORT")
-	if (port == nil) {
+	if (port == "") {
 		port = "6969"
 	}
 
