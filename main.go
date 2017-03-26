@@ -26,7 +26,12 @@ func main() {
 	r.HandleFunc("/quadro-geral", handlers.QuadroGeral).Methods("GET")
 	http.Handle("/", r)
 
-	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT") || "6969", r))
+	var port string = os.Getenv("PORT")
+	if (!port) {
+		port = "6969"
+	}
+
+	log.Fatal(http.ListenAndServe(":" + port, r))
 }
 
 
