@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"log"
 	"github.com/mbier/aceleratomo/handlers"
+	"os"
 )
 
 func main() {
@@ -24,7 +25,8 @@ func main() {
 	r.HandleFunc("/smo-cte", h.QuadroSMOCTE).Methods("GET")
 	r.HandleFunc("/quadro-geral", handlers.QuadroGeral).Methods("GET")
 	http.Handle("/", r)
-	log.Fatal(http.ListenAndServe(":6969", r))
+
+	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT") || "6969", r))
 }
 
 
