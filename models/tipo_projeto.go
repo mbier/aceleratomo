@@ -9,4 +9,5 @@ const (
 	SMO_NET
 	SMO_WEB
 	TMS_WEB
+	DELPHI
 )

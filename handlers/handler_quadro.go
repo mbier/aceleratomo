@@ -45,6 +45,11 @@ func (c *HandlerQuadro) QuadroSMOCTE(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, acelerato.GerarQuadroSMOCTE(c.mongo))
 }
 
+func (c *HandlerQuadro) QuadroDelhpi(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, acelerato.GerarQuadroDelphi(c.mongo))
+}
+
 func QuadroGeral(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, acelerato.GerarQuadroGeral())

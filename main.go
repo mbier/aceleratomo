@@ -23,6 +23,7 @@ func main() {
 	r.HandleFunc("/smo-net", h.QuadroSMONET).Methods("GET")
 	r.HandleFunc("/smo-web", h.QuadroSMOWEB).Methods("GET")
 	r.HandleFunc("/smo-cte", h.QuadroSMOCTE).Methods("GET")
+	r.HandleFunc("/delphi", h.QuadroDelhpi).Methods("GET")
 	r.HandleFunc("/quadro-geral", handlers.QuadroGeral).Methods("GET")
 	http.Handle("/", r)
 

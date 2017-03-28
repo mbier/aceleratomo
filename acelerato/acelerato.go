@@ -97,6 +97,13 @@ func getDemandasLogrev() []models.Demanda {
 	return getDemandas(url)
 }
 
+func getDemandasDelphi() []models.Demanda {
+
+	url := "https://mosistemas.acelerato.com/api/demandas?projetos=5&categorias=17"
+
+	return getDemandas(url)
+}
+
 func GerarQuadroTrack(mongoSession *mgo.Session) string {
 
 	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria := GerarDadosQuadroTrack(mongoSession)
@@ -177,6 +184,18 @@ func GerarQuadroSMOCTE(mongoSession *mgo.Session) string {
 	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria := gerarQuadro(demandas, testeFiltro)
 
 	gravarProjetoDados(mongoSession, models.SMO_CTE, qtdBacklogMelhoria, qtdBacklogProblema, qtdTesteMelhoria, qtdTesteProblema)
+
+	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria)
+}
+
+func GerarQuadroDelphi(mongoSession *mgo.Session) string {
+	demandas := getDemandasDelphi()
+
+	testeFiltro := []int{19, 28}
+
+	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria := gerarQuadro(demandas, testeFiltro)
+
+	gravarProjetoDados(mongoSession, models.DELPHI, qtdBacklogMelhoria, qtdBacklogProblema, qtdTesteMelhoria, qtdTesteProblema)
 
 	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria)
 }
