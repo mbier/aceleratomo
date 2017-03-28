@@ -69,13 +69,6 @@ func getDemandasSMOWEB() []models.Demanda {
 	return getDemandas(url)
 }
 
-func getDemandasSMOFrete() []models.Demanda {
-
-	url := "https://mosistemas.acelerato.com/api/demandas?projetos=4&categorias=22"
-
-	return getDemandas(url)
-}
-
 func getDemandasSMONET() []models.Demanda {
 
 	url := "https://mosistemas.acelerato.com/api/demandas?projetos=4&categorias=22"
@@ -221,11 +214,6 @@ func GerarQuadroGeral() string {
 	qtdBacklogProblemaLogrev, qtdBacklogMelhoriaLogrev, qtdTesteProblemaLogrev, qtdTesteMelhoriaLogrev := gerarQuadro(demandasLogrev, testeFiltroFlex)
 	qtdBacklogProblemaDelphi, qtdBacklogMelhoriaDelphi, qtdTesteProblemaDelphi, qtdTesteMelhoriaDelphi := gerarQuadro(demandasDelphi, testeFiltroDelphi)
 
-	qtdBacklogProblema := 0
-	qtdBacklogMelhoria := 0
-	qtdTesteProblema := 0
-	qtdTesteMelhoria := 0
-
 	qtdBacklogProblemaGeral := qtdBacklogProblemaTrack + qtdBacklogProblemaTmsweb + qtdBacklogProblemaSmonet + qtdBacklogProblemaAdm + qtdBacklogProblemaSmocte + qtdBacklogProblemaLogrev + qtdBacklogProblemaDelphi
 	qtdBacklogMelhoriaGeral := qtdBacklogMelhoriaTrack + qtdBacklogMelhoriaTmsweb + qtdBacklogMelhoriaSmonet + qtdBacklogMelhoriaAdm + qtdBacklogMelhoriaSmocte + qtdBacklogMelhoriaLogrev + qtdBacklogMelhoriaDelphi
 	qtdTesteProblemaGeral := qtdTesteProblemaTrack + qtdTesteProblemaTmsweb + qtdTesteProblemaSmonet + qtdTesteProblemaAdm + qtdTesteProblemaSmocte + qtdTesteProblemaLogrev + qtdTesteProblemaDelphi
@@ -246,10 +234,9 @@ func GerarQuadroGeral() string {
 	buffer.WriteString(gerarQuadroGeralItem("SMOCTE", qtdBacklogProblemaSmocte, qtdBacklogMelhoriaSmocte, qtdTesteProblemaSmocte, qtdTesteMelhoriaSmocte))
 	buffer.WriteString(gerarQuadroGeralItem("SMOTMS", qtdBacklogProblemaTmsweb, qtdBacklogMelhoriaTmsweb, qtdTesteProblemaTmsweb, qtdTesteMelhoriaTmsweb))
 	buffer.WriteString(gerarQuadroGeralItem("ADM", qtdBacklogProblemaAdm, qtdBacklogMelhoriaAdm, qtdTesteProblemaAdm, qtdTesteMelhoriaAdm))
-	buffer.WriteString(gerarQuadroGeralItem("SMO-FRETE", qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria))
 	buffer.WriteString(gerarQuadroGeralItem("LOGREV", qtdBacklogProblemaLogrev, qtdBacklogMelhoriaLogrev, qtdTesteProblemaLogrev, qtdTesteMelhoriaLogrev))
 	buffer.WriteString(gerarQuadroGeralItem("SMONET", qtdBacklogProblemaSmonet, qtdBacklogMelhoriaSmonet, qtdTesteProblemaSmonet, qtdTesteMelhoriaSmonet))
-	buffer.WriteString(gerarQuadroGeralItem("TRACK", qtdBacklogProblemaTrack, qtdBacklogMelhoriaTrack, qtdTesteProblemaTrack, qtdTesteMelhoriaTrack))
+	buffer.WriteString(gerarQuadroGeralItem("SMOFRETE", qtdBacklogProblemaTrack, qtdBacklogMelhoriaTrack, qtdTesteProblemaTrack, qtdTesteMelhoriaTrack))
 	buffer.WriteString(gerarQuadroGeralItem("DELPHI", qtdBacklogProblemaDelphi, qtdBacklogMelhoriaDelphi, qtdTesteProblemaDelphi, qtdTesteMelhoriaDelphi))
 	buffer.WriteString(gerarQuadroGeralItem("Total", qtdBacklogProblemaGeral, qtdBacklogMelhoriaGeral, qtdTesteProblemaGeral, qtdTesteMelhoriaGeral))
 

@@ -10,7 +10,7 @@ func Raiz(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "<ul>" +
 		"<li><a href=\"/quadro-geral\">Quadro Geral</li>" +
-		"<li><a href=\"/track\">Track</li>" +
+		"<li><a href=\"/smofrete\">SMOFRETE</li>" +
 		"<li><a href=\"/adm\">Adm</li>" +
 		"<li><a href=\"/tms-web\">TMS-WEB</li>" +
 		"<li><a href=\"/smo-net\">SMO-NET</li>" +

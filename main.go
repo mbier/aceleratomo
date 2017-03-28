@@ -17,7 +17,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", handlers.Raiz).Methods("GET")
-	r.HandleFunc("/track", h.QuadroTrack).Methods("GET")
+	r.HandleFunc("/smofrete", h.QuadroTrack).Methods("GET")
 	r.HandleFunc("/adm", h.QuadroAdm).Methods("GET")
 	r.HandleFunc("/tms-web", h.QuadroTMSWEB).Methods("GET")
 	r.HandleFunc("/smo-net", h.QuadroSMONET).Methods("GET")
