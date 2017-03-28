@@ -16,5 +16,6 @@ func Raiz(w http.ResponseWriter, r *http.Request) {
 		"<li><a href=\"/smo-net\">SMO-NET</li>" +
 		"<li><a href=\"/smo-web\">SMO-WEB</li>" +
 		"<li><a href=\"/smo-cte\">SMO-CTE</li>" +
+		"<li><a href=\"/delphi\">DELPHI</li>" +
 		"</ul>")
 }
