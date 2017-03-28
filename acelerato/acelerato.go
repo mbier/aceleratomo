@@ -211,7 +211,14 @@ func GerarQuadroGeral() string {
 
 	var buffer bytes.Buffer
 
-	buffer.WriteString("<table style=\"width:100%\">")
+	buffer.WriteString("<head>");
+	buffer.WriteString("<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css\" integrity=\"sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ\" crossorigin=\"anonymous\">");
+	buffer.WriteString("<script src=\"https://code.jquery.com/jquery-3.1.1.slim.min.js\" integrity=\"sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n\" crossorigin=\"anonymous\"></script>");
+	buffer.WriteString("<script src=\"https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js\" integrity=\"sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb\" crossorigin=\"anonymous\"></script>");
+	buffer.WriteString("<script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js\" integrity=\"sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn\" crossorigin=\"anonymous\"></script>");
+	buffer.WriteString("</head>");
+
+	buffer.WriteString("<table style=\"width:100%\" class=\"table table-striped table-bordered\">")
 	buffer.WriteString("<tr><th>Produto</th><th>Melhoria</th><th>Problema</th><th>AG. Teste</th><th>Total</th><th>&#37; Melhoria</th><th>&#37; Problema</th></tr>")
 
 	buffer.WriteString(gerarQuadroGeralItem("SMOCTE", qtdBacklogProblemaSmocte, qtdBacklogMelhoriaSmocte, qtdTesteProblemaSmocte, qtdTesteMelhoriaSmocte))
@@ -280,17 +287,29 @@ func arrayContains(a int, list []int) bool {
 func gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria int) string {
 	var buffer bytes.Buffer
 
-	buffer.WriteString("Total em Backlog..........:" + strconv.Itoa(qtdBacklogProblema + qtdBacklogMelhoria) + "\n")
-	buffer.WriteString("Total em Backlog Problema.:" + strconv.Itoa(qtdBacklogProblema) + "\n")
-	buffer.WriteString("Total em Backlog Melhoria.:" + strconv.Itoa(qtdBacklogMelhoria) + "\n")
+	buffer.WriteString("<head>");
+	buffer.WriteString("<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css\" integrity=\"sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ\" crossorigin=\"anonymous\">");
+	buffer.WriteString("<script src=\"https://code.jquery.com/jquery-3.1.1.slim.min.js\" integrity=\"sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n\" crossorigin=\"anonymous\"></script>");
+	buffer.WriteString("<script src=\"https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js\" integrity=\"sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb\" crossorigin=\"anonymous\"></script>");
+	buffer.WriteString("<script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js\" integrity=\"sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn\" crossorigin=\"anonymous\"></script>");
+	buffer.WriteString("</head>");
 
-	buffer.WriteString("Total em Teste............:" + strconv.Itoa(qtdTesteProblema + qtdTesteMelhoria) + "\n")
-	buffer.WriteString("Total em Teste Problema...:" + strconv.Itoa(qtdTesteProblema) + "\n")
-	buffer.WriteString("Total em Teste Melhoria...:" + strconv.Itoa(qtdTesteMelhoria) + "\n")
+	buffer.WriteString("<table style=\"width:100%\" class=\"table table-striped table-bordered\">")
+	buffer.WriteString("<tr><th></th><th>Total</th><th>Problema</th><th>Melhoria</th></tr>")
 
-	buffer.WriteString("Total.....................:" + strconv.Itoa(qtdBacklogProblema + qtdBacklogMelhoria + qtdTesteProblema + qtdTesteMelhoria) + "\n")
-	buffer.WriteString("Total Problema............:" + strconv.Itoa(qtdTesteProblema + qtdBacklogProblema) + "\n")
-	buffer.WriteString("Total Melhoria............:" + strconv.Itoa(qtdTesteMelhoria + qtdBacklogMelhoria) + "\n")
+	buffer.WriteString("<tr><td>Backlog</td><td>" + strconv.Itoa(qtdBacklogProblema + qtdBacklogMelhoria) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(qtdBacklogProblema) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(qtdBacklogMelhoria) + "</td></tr>")
+
+	buffer.WriteString("<tr><td>Em Teste</td><td>" + strconv.Itoa(qtdTesteProblema + qtdTesteMelhoria) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(qtdTesteProblema) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(qtdTesteMelhoria) + "</td></tr>")
+
+	buffer.WriteString("<tr><td>Total</td><td>" + strconv.Itoa(qtdBacklogProblema + qtdBacklogMelhoria + qtdTesteProblema + qtdTesteMelhoria) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(qtdTesteProblema + qtdBacklogProblema) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(qtdTesteMelhoria + qtdBacklogMelhoria) + "</td></tr>")
+
+	buffer.WriteString("</table>");
 
 	return buffer.String()
 }
