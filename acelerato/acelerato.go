@@ -204,7 +204,6 @@ func GerarQuadroGeral() string {
 
 	testeFiltroTrack := []int{10, 11}
 	testeFiltroSMO := []int{19, 20}
-	testeFiltroFlex := []int{10, 11}
 	testeFiltroDelphi := []int{19, 28}
 
 	qtdBacklogProblemaTrack, qtdBacklogMelhoriaTrack, qtdTesteProblemaTrack, qtdTesteMelhoriaTrack := gerarQuadro(demandasTrack, testeFiltroTrack)
