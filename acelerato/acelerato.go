@@ -1,22 +1,20 @@
 package acelerato
 
 import (
+	"bytes"
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
-	"io/ioutil"
 	"strconv"
-	"bytes"
+
 	"github.com/mbier/aceleratomo/models"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
-	"github.com/mbier/aceleratomo/mongo"
-	"time"
 )
 
+// Acesso ao Acelerato
 const (
 	Usuario string = "marlon.bier@mosistemas.com"
-	Token string = "5cGDISvo1gM2Gi7tO7G+jA=="
+	Token   string = "5cGDISvo1gM2Gi7tO7G+jA=="
 )
 
 func getDemandas(url string) []models.Demanda {
@@ -97,102 +95,92 @@ func getDemandasDelphi() []models.Demanda {
 	return getDemandas(url)
 }
 
-func GerarQuadroTrack(mongoSession *mgo.Session) string {
+// GerarQuadroTrack gera as informacoes do track
+func GerarQuadroTrack() string {
 
-	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria := GerarDadosQuadroTrack(mongoSession)
+	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria := GerarDadosQuadroTrack()
 
 	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria)
 }
 
-//func ValidarGravacaoAutoTrack(mongoSession *mgo.Session) bool {
-//	var date time.Time = time.Now()
-//	return mongoSession.DB(mongo.AuthDatabase).C("projeto_dados").Find(bson.M{"tipo_projeto": models.TRACK, "data_geracao": {"$gte": "new Date(2017-03-12)"}}).Count() > 0
-//}
-
-func GerarDadosQuadroTrack(mongoSession *mgo.Session) (qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria int) {
+// GerarDadosQuadroTrack gera as informacoes do track
+func GerarDadosQuadroTrack() (qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria int) {
 	demandas := getDemandasTrack()
 
 	testeFiltro := []int{10, 11}
 
 	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria = gerarQuadro(demandas, testeFiltro)
 
-	gravarProjetoDados(mongoSession, models.TRACK, qtdBacklogMelhoria, qtdBacklogProblema, qtdTesteMelhoria, qtdTesteProblema)
-
 	return
 }
 
-func GerarQuadroAdm(mongoSession *mgo.Session) string {
+// GerarQuadroAdm gera as informacoes do track
+func GerarQuadroAdm() string {
 	demandas := getDemandasAdm()
 
 	testeFiltro := []int{10, 11}
 
 	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria := gerarQuadro(demandas, testeFiltro)
 
-	gravarProjetoDados(mongoSession, models.ADM, qtdBacklogMelhoria, qtdBacklogProblema, qtdTesteMelhoria, qtdTesteProblema)
-
 	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria)
 }
 
-func GerarQuadroTMSWEB(mongoSession *mgo.Session) string {
+// GerarQuadroTMSWEB gera as informacoes do track
+func GerarQuadroTMSWEB() string {
 	demandas := getDemandasTMSWEB()
 
 	testeFiltro := []int{19, 20}
 
 	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria := gerarQuadro(demandas, testeFiltro)
 
-	gravarProjetoDados(mongoSession, models.TMS_WEB, qtdBacklogMelhoria, qtdBacklogProblema, qtdTesteMelhoria, qtdTesteProblema)
-
 	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria)
 }
 
-func GerarQuadroSMONET(mongoSession *mgo.Session) string {
+// GerarQuadroSMONET gera as informacoes do track
+func GerarQuadroSMONET() string {
 	demandas := getDemandasSMONET()
 
 	testeFiltro := []int{19, 20}
 
 	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria := gerarQuadro(demandas, testeFiltro)
 
-	gravarProjetoDados(mongoSession, models.SMO_NET, qtdBacklogMelhoria, qtdBacklogProblema, qtdTesteMelhoria, qtdTesteProblema)
-
 	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria)
 }
 
-func GerarQuadroSMOWEB(mongoSession *mgo.Session) string {
+// GerarQuadroSMOWEB gera as informacoes do track
+func GerarQuadroSMOWEB() string {
 	demandas := getDemandasSMOWEB()
 
 	testeFiltro := []int{19, 20}
 
 	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria := gerarQuadro(demandas, testeFiltro)
 
-	gravarProjetoDados(mongoSession, models.SMO_WEB, qtdBacklogMelhoria, qtdBacklogProblema, qtdTesteMelhoria, qtdTesteProblema)
-
 	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria)
 }
 
-func GerarQuadroSMOCTE(mongoSession *mgo.Session) string {
+// GerarQuadroSMOCTE gera as informacoes do track
+func GerarQuadroSMOCTE() string {
 	demandas := getDemandasSMOCTE()
 
 	testeFiltro := []int{19, 20}
 
 	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria := gerarQuadro(demandas, testeFiltro)
 
-	gravarProjetoDados(mongoSession, models.SMO_CTE, qtdBacklogMelhoria, qtdBacklogProblema, qtdTesteMelhoria, qtdTesteProblema)
-
 	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria)
 }
 
-func GerarQuadroDelphi(mongoSession *mgo.Session) string {
+// GerarQuadroDelphi gera as informacoes do track
+func GerarQuadroDelphi() string {
 	demandas := getDemandasDelphi()
 
 	testeFiltro := []int{19, 28}
 
 	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria := gerarQuadro(demandas, testeFiltro)
 
-	gravarProjetoDados(mongoSession, models.DELPHI, qtdBacklogMelhoria, qtdBacklogProblema, qtdTesteMelhoria, qtdTesteProblema)
-
 	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria)
 }
 
+// GerarQuadroGeral gera as informacoes do track
 func GerarQuadroGeral() string {
 	demandasSmocte := getDemandasSMOCTE()
 	demandasTmsweb := getDemandasTMSWEB()
@@ -221,12 +209,12 @@ func GerarQuadroGeral() string {
 
 	var buffer bytes.Buffer
 
-	buffer.WriteString("<head>");
-	buffer.WriteString("<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css\" integrity=\"sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ\" crossorigin=\"anonymous\">");
-	buffer.WriteString("<script src=\"https://code.jquery.com/jquery-3.1.1.slim.min.js\" integrity=\"sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n\" crossorigin=\"anonymous\"></script>");
-	buffer.WriteString("<script src=\"https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js\" integrity=\"sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb\" crossorigin=\"anonymous\"></script>");
-	buffer.WriteString("<script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js\" integrity=\"sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn\" crossorigin=\"anonymous\"></script>");
-	buffer.WriteString("</head>");
+	buffer.WriteString("<head>")
+	buffer.WriteString("<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css\" integrity=\"sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ\" crossorigin=\"anonymous\">")
+	buffer.WriteString("<script src=\"https://code.jquery.com/jquery-3.1.1.slim.min.js\" integrity=\"sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n\" crossorigin=\"anonymous\"></script>")
+	buffer.WriteString("<script src=\"https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js\" integrity=\"sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb\" crossorigin=\"anonymous\"></script>")
+	buffer.WriteString("<script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js\" integrity=\"sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn\" crossorigin=\"anonymous\"></script>")
+	buffer.WriteString("</head>")
 
 	buffer.WriteString("<table style=\"width:100%\" class=\"table table-striped table-bordered\">")
 	buffer.WriteString("<tr><th>Produto</th><th>Melhoria</th><th>Problema</th><th>AG. Teste</th><th>Total</th><th>&#37; Melhoria</th><th>&#37; Problema</th></tr>")
@@ -252,16 +240,16 @@ func gerarQuadroGeralItem(produto string, qtdBacklogProblema, qtdBacklogMelhoria
 	buffer.WriteString("<td>" + produto + "</td>")
 	buffer.WriteString("<td>" + strconv.Itoa(qtdBacklogMelhoria) + "</td>")
 	buffer.WriteString("<td>" + strconv.Itoa(qtdBacklogProblema) + "</td>")
-	buffer.WriteString("<td>" + strconv.Itoa(qtdTesteProblema + qtdTesteMelhoria) + "</td>")
-	buffer.WriteString("<td>" + strconv.Itoa(qtdBacklogProblema + qtdBacklogMelhoria) + "</td>")
-	buffer.WriteString("<td>" + strconv.FormatFloat(((float64(qtdBacklogMelhoria) / float64(qtdBacklogProblema + qtdBacklogMelhoria)) * 100.0), 'f', 2, 64) + "</td>")
-	buffer.WriteString("<td>" + strconv.FormatFloat(((float64(qtdBacklogProblema) / float64(qtdBacklogProblema + qtdBacklogMelhoria)) * 100.0), 'f', 2, 64) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(qtdTesteProblema+qtdTesteMelhoria) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(qtdBacklogProblema+qtdBacklogMelhoria) + "</td>")
+	buffer.WriteString("<td>" + strconv.FormatFloat(((float64(qtdBacklogMelhoria)/float64(qtdBacklogProblema+qtdBacklogMelhoria))*100.0), 'f', 2, 64) + "</td>")
+	buffer.WriteString("<td>" + strconv.FormatFloat(((float64(qtdBacklogProblema)/float64(qtdBacklogProblema+qtdBacklogMelhoria))*100.0), 'f', 2, 64) + "</td>")
 	buffer.WriteString("</tr>")
 
 	return buffer.String()
 }
 
-func gerarQuadro(demandas []models.Demanda, testeFilter[]int) (qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria int) {
+func gerarQuadro(demandas []models.Demanda, testeFilter []int) (qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria int) {
 	qtdBacklogProblema = 0
 	qtdBacklogMelhoria = 0
 	qtdTesteProblema = 0
@@ -297,49 +285,29 @@ func arrayContains(a int, list []int) bool {
 func gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria int) string {
 	var buffer bytes.Buffer
 
-	buffer.WriteString("<head>");
-	buffer.WriteString("<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css\" integrity=\"sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ\" crossorigin=\"anonymous\">");
-	buffer.WriteString("<script src=\"https://code.jquery.com/jquery-3.1.1.slim.min.js\" integrity=\"sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n\" crossorigin=\"anonymous\"></script>");
-	buffer.WriteString("<script src=\"https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js\" integrity=\"sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb\" crossorigin=\"anonymous\"></script>");
-	buffer.WriteString("<script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js\" integrity=\"sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn\" crossorigin=\"anonymous\"></script>");
-	buffer.WriteString("</head>");
+	buffer.WriteString("<head>")
+	buffer.WriteString("<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css\" integrity=\"sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ\" crossorigin=\"anonymous\">")
+	buffer.WriteString("<script src=\"https://code.jquery.com/jquery-3.1.1.slim.min.js\" integrity=\"sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n\" crossorigin=\"anonymous\"></script>")
+	buffer.WriteString("<script src=\"https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js\" integrity=\"sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb\" crossorigin=\"anonymous\"></script>")
+	buffer.WriteString("<script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js\" integrity=\"sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn\" crossorigin=\"anonymous\"></script>")
+	buffer.WriteString("</head>")
 
 	buffer.WriteString("<table style=\"width:100%\" class=\"table table-striped table-bordered\">")
 	buffer.WriteString("<tr><th></th><th>Total</th><th>Problema</th><th>Melhoria</th></tr>")
 
-	buffer.WriteString("<tr><td>Backlog</td><td>" + strconv.Itoa(qtdBacklogProblema + qtdBacklogMelhoria) + "</td>")
+	buffer.WriteString("<tr><td>Backlog</td><td>" + strconv.Itoa(qtdBacklogProblema+qtdBacklogMelhoria) + "</td>")
 	buffer.WriteString("<td>" + strconv.Itoa(qtdBacklogProblema) + "</td>")
 	buffer.WriteString("<td>" + strconv.Itoa(qtdBacklogMelhoria) + "</td></tr>")
 
-	buffer.WriteString("<tr><td>Em Teste</td><td>" + strconv.Itoa(qtdTesteProblema + qtdTesteMelhoria) + "</td>")
+	buffer.WriteString("<tr><td>Em Teste</td><td>" + strconv.Itoa(qtdTesteProblema+qtdTesteMelhoria) + "</td>")
 	buffer.WriteString("<td>" + strconv.Itoa(qtdTesteProblema) + "</td>")
 	buffer.WriteString("<td>" + strconv.Itoa(qtdTesteMelhoria) + "</td></tr>")
 
-	buffer.WriteString("<tr><td>Total</td><td>" + strconv.Itoa(qtdBacklogProblema + qtdBacklogMelhoria + qtdTesteProblema + qtdTesteMelhoria) + "</td>")
-	buffer.WriteString("<td>" + strconv.Itoa(qtdTesteProblema + qtdBacklogProblema) + "</td>")
-	buffer.WriteString("<td>" + strconv.Itoa(qtdTesteMelhoria + qtdBacklogMelhoria) + "</td></tr>")
+	buffer.WriteString("<tr><td>Total</td><td>" + strconv.Itoa(qtdBacklogProblema+qtdBacklogMelhoria+qtdTesteProblema+qtdTesteMelhoria) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(qtdTesteProblema+qtdBacklogProblema) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(qtdTesteMelhoria+qtdBacklogMelhoria) + "</td></tr>")
 
-	buffer.WriteString("</table>");
+	buffer.WriteString("</table>")
 
 	return buffer.String()
-}
-func gravarProjetoDados(mongoSession *mgo.Session, tipoProjeto models.TipoProjeto, qtdBacklogMelhoria, qtdBacklogProblema, qtdTesteMelhoria, qtdTesteProblema int) {
-	if mongoSession == nil {
-		return
-	}
-
-	projeto := models.Projeto{}
-
-	projeto.ID = bson.NewObjectId()
-	projeto.Data = time.Now()
-	projeto.TipoProjeto = tipoProjeto
-	projeto.QtdBacklogMelhoria = qtdBacklogMelhoria
-	projeto.QtdBacklogProblema = qtdBacklogProblema
-	projeto.QtdTesteMelhoria = qtdTesteMelhoria
-	projeto.QtdTesteProblema = qtdTesteProblema
-
-	err := mongoSession.DB(mongo.AuthDatabase).C("projeto_dados").Insert(projeto)
-	if err != nil {
-		log.Println(err)
-	}
 }

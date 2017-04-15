@@ -1,19 +1,17 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
-	"net/http"
 	"log"
-	"github.com/mbier/aceleratomo/handlers"
+	"net/http"
 	"os"
+
+	"github.com/gorilla/mux"
+	"github.com/mbier/aceleratomo/handlers"
 )
 
 func main() {
 
-	//mongoSession := mongo.GetMongoSession()
-
-	//h := handlers.NewHandlerQuadro(mongoSession)
-	h := handlers.NewHandlerQuadro(nil)
+	h := handlers.NewHandlerQuadro()
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", handlers.Raiz).Methods("GET")
@@ -27,14 +25,10 @@ func main() {
 	r.HandleFunc("/quadro-geral", handlers.QuadroGeral).Methods("GET")
 	http.Handle("/", r)
 
-	var port string = os.Getenv("PORT")
-	if (port == "") {
+	port := os.Getenv("PORT")
+	if port == "" {
 		port = "6969"
 	}
 
-	log.Fatal(http.ListenAndServe(":" + port, r))
+	log.Fatal(http.ListenAndServe(":"+port, r))
 }
-
-
-
-
