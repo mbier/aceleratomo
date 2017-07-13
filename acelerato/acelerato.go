@@ -6,9 +6,12 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"sort"
 	"strconv"
+	"sync"
 
 	"github.com/mbier/aceleratomo/models"
+	"github.com/mbier/aceleratomo/projeto"
 )
 
 // Acesso ao Acelerato
@@ -39,187 +42,32 @@ func getDemandas(url string) []models.Demanda {
 	return demandas
 }
 
-func getDemandasTrack() []models.Demanda {
+func getDemandasProjeto(projeto *projeto.Projeto) []models.Demanda {
 
-	url := "https://mosistemas.acelerato.com/api/demandas?projetos=2&categorias=20,22"
-
-	return getDemandas(url)
+	return getDemandas(projeto.URLAcelerato)
 }
 
-func getDemandasAdm() []models.Demanda {
+// GerarQuadro com as informacoes do projeto
+func GerarQuadro(projeto *projeto.Projeto) string {
 
-	url := "https://mosistemas.acelerato.com/api/demandas?projetos=11&categorias=26"
+	quadro := GerarDadosQuadro(projeto)
 
-	return getDemandas(url)
+	return gerarQuadroString(quadro)
 }
 
-func getDemandasTMSWEB() []models.Demanda {
+// GerarDadosQuadro gera as informacoes do track
+func GerarDadosQuadro(projeto *projeto.Projeto) (quadro models.Quadro) {
+	demandas := getDemandasProjeto(projeto)
 
-	url := "https://mosistemas.acelerato.com/api/demandas?projetos=4&categorias=15"
-
-	return getDemandas(url)
-}
-
-func getDemandasSMOWEB() []models.Demanda {
-
-	url := "https://mosistemas.acelerato.com/api/demandas?projetos=4&categorias=16"
-
-	return getDemandas(url)
-}
-
-func getDemandasSMONET() []models.Demanda {
-
-	url := "https://mosistemas.acelerato.com/api/demandas?projetos=4&categorias=22"
-
-	return getDemandas(url)
-}
-
-func getDemandasSMOCTE() []models.Demanda {
-
-	url := "https://mosistemas.acelerato.com/api/demandas?projetos=4&categorias=16"
-
-	return getDemandas(url)
-}
-
-func getDemandasLogrev() []models.Demanda {
-
-	url := "https://mosistemas.acelerato.com/api/demandas?projetos=2&categorias=25"
-
-	return getDemandas(url)
-}
-
-func getDemandasDelphi() []models.Demanda {
-
-	url := "https://mosistemas.acelerato.com/api/demandas?projetos=5&categorias=17"
-
-	return getDemandas(url)
-}
-
-// GerarQuadroTrack gera as informacoes do track
-func GerarQuadroTrack() string {
-
-	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria, qtdAgMerge := GerarDadosQuadroTrack()
-
-	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria, qtdAgMerge)
-}
-
-// GerarDadosQuadroTrack gera as informacoes do track
-func GerarDadosQuadroTrack() (qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria, qtdAgMerge int) {
-	demandas := getDemandasTrack()
-
-	testeFiltro := []int{10, 11}
-	agMergeFiltro := []int{13}
-
-	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria, qtdAgMerge = gerarQuadro(demandas, testeFiltro, agMergeFiltro)
+	quadro = *gerarQuadro(demandas, projeto.TesteFiltro, projeto.AgMergeFiltro)
 
 	return
 }
 
-// GerarQuadroAdm gera as informacoes do track
-func GerarQuadroAdm() string {
-	demandas := getDemandasAdm()
-
-	testeFiltro := []int{10, 11}
-	agMergeFiltro := []int{13}
-
-	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria, qtdAgMerge := gerarQuadro(demandas, testeFiltro, agMergeFiltro)
-
-	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria, qtdAgMerge)
-}
-
-// GerarQuadroTMSWEB gera as informacoes do track
-func GerarQuadroTMSWEB() string {
-	demandas := getDemandasTMSWEB()
-
-	testeFiltro := []int{19, 20}
-
-	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria, qtdAgMerge := gerarQuadro(demandas, testeFiltro, nil)
-
-	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria, qtdAgMerge)
-}
-
-// GerarQuadroSMONET gera as informacoes do track
-func GerarQuadroSMONET() string {
-	demandas := getDemandasSMONET()
-
-	testeFiltro := []int{19, 20}
-
-	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria, qtdAgMerge := gerarQuadro(demandas, testeFiltro, nil)
-
-	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria, qtdAgMerge)
-}
-
-// GerarQuadroSMOWEB gera as informacoes do track
-func GerarQuadroSMOWEB() string {
-	demandas := getDemandasSMOWEB()
-
-	testeFiltro := []int{19, 20}
-
-	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria, qtdAgMerge := gerarQuadro(demandas, testeFiltro, nil)
-
-	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria, qtdAgMerge)
-}
-
-// GerarQuadroSMOCTE gera as informacoes do track
-func GerarQuadroSMOCTE() string {
-	demandas := getDemandasSMOCTE()
-
-	testeFiltro := []int{19, 20}
-
-	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria, qtdAgMerge := gerarQuadro(demandas, testeFiltro, nil)
-
-	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria, qtdAgMerge)
-}
-
-// GerarQuadroDelphi gera as informacoes do track
-func GerarQuadroDelphi() string {
-	demandas := getDemandasDelphi()
-
-	testeFiltro := []int{19, 28}
-
-	qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria, qtdAgMerge := gerarQuadro(demandas, testeFiltro, nil)
-
-	return gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria, qtdAgMerge)
-}
-
 // GerarQuadroGeral gera as informacoes do track
 func GerarQuadroGeral() string {
-	demandasSmocte := getDemandasSMOCTE()
-	demandasTmsweb := getDemandasTMSWEB()
-	demandasSmonet := getDemandasSMONET()
-	demandasTrack := getDemandasTrack()
-	demandasAdm := getDemandasAdm()
-	demandasLogrev := getDemandasLogrev()
-	demandasDelphi := getDemandasDelphi()
 
-	testeFiltroTrack := []int{10, 11}
-	testeFiltroSMO := []int{19, 20}
-	testeFiltroDelphi := []int{19, 28}
-	agMergeFiltro := []int{13}
-
-	qtdBacklogProblemaTrack, qtdBacklogMelhoriaTrack, qtdTesteProblemaTrack, qtdTesteMelhoriaTrack, qtdAgMergeTrack := gerarQuadro(demandasTrack, testeFiltroTrack, agMergeFiltro)
-
-	qtdBacklogProblemaAdm, qtdBacklogMelhoriaAdm, qtdTesteProblemaAdm, qtdTesteMelhoriaAdm, qtdAgMergeAdm := gerarQuadro(demandasAdm, testeFiltroTrack, agMergeFiltro)
-
-	qtdBacklogProblemaTmsweb, qtdBacklogMelhoriaTmsweb, qtdTesteProblemaTmsweb, qtdTesteMelhoriaTmsweb, qtdAgMergeTmsweb := gerarQuadro(demandasTmsweb, testeFiltroSMO, nil)
-
-	qtdBacklogProblemaSmonet, qtdBacklogMelhoriaSmonet, qtdTesteProblemaSmonet, qtdTesteMelhoriaSmonet, qtdAgMergeSmonet := gerarQuadro(demandasSmonet, testeFiltroSMO, nil)
-
-	qtdBacklogProblemaSmocte, qtdBacklogMelhoriaSmocte, qtdTesteProblemaSmocte, qtdTesteMelhoriaSmocte, qtdAgMergeSmocte := gerarQuadro(demandasSmocte, testeFiltroSMO, nil)
-
-	qtdBacklogProblemaLogrev, qtdBacklogMelhoriaLogrev, qtdTesteProblemaLogrev, qtdTesteMelhoriaLogrev, qtdAgMergeLogrev := gerarQuadro(demandasLogrev, testeFiltroTrack, agMergeFiltro)
-
-	qtdBacklogProblemaDelphi, qtdBacklogMelhoriaDelphi, qtdTesteProblemaDelphi, qtdTesteMelhoriaDelphi, qtdAgMergeDelphi := gerarQuadro(demandasDelphi, testeFiltroDelphi, nil)
-
-	qtdBacklogProblemaGeral := qtdBacklogProblemaTrack + qtdBacklogProblemaTmsweb + qtdBacklogProblemaSmonet + qtdBacklogProblemaAdm + qtdBacklogProblemaSmocte + qtdBacklogProblemaLogrev + qtdBacklogProblemaDelphi
-
-	qtdBacklogMelhoriaGeral := qtdBacklogMelhoriaTrack + qtdBacklogMelhoriaTmsweb + qtdBacklogMelhoriaSmonet + qtdBacklogMelhoriaAdm + qtdBacklogMelhoriaSmocte + qtdBacklogMelhoriaLogrev + qtdBacklogMelhoriaDelphi
-
-	qtdTesteProblemaGeral := qtdTesteProblemaTrack + qtdTesteProblemaTmsweb + qtdTesteProblemaSmonet + qtdTesteProblemaAdm + qtdTesteProblemaSmocte + qtdTesteProblemaLogrev + qtdTesteProblemaDelphi
-
-	qtdTesteMelhoriaGeral := qtdTesteMelhoriaTrack + qtdTesteMelhoriaTmsweb + qtdTesteMelhoriaSmonet + qtdTesteMelhoriaAdm + qtdTesteMelhoriaSmocte + qtdTesteMelhoriaLogrev + qtdTesteMelhoriaDelphi
-
-	qtdAgMergeGeral := qtdAgMergeTrack + qtdAgMergeTmsweb + qtdAgMergeSmonet + qtdAgMergeAdm + qtdAgMergeSmocte + qtdAgMergeLogrev + qtdAgMergeDelphi
+	var qtdBacklogProblemaGeral, qtdBacklogMelhoriaGeral, qtdTesteProblemaGeral, qtdTesteMelhoriaGeral, qtdAgMergeGeral int
 
 	var buffer bytes.Buffer
 
@@ -233,37 +81,74 @@ func GerarQuadroGeral() string {
 	buffer.WriteString("<table style=\"width:100%\" class=\"table table-striped table-bordered\">")
 	buffer.WriteString("<tr><th>Produto</th><th>Melhoria</th><th>Problema</th><th>AG. Merge</th><th>AG. Teste</th><th>Total</th><th>&#37; Melhoria</th><th>&#37; Problema</th></tr>")
 
-	buffer.WriteString(gerarQuadroGeralItem("SMOCTE", qtdBacklogProblemaSmocte, qtdBacklogMelhoriaSmocte, qtdTesteProblemaSmocte, qtdTesteMelhoriaSmocte, qtdAgMergeSmocte))
-	buffer.WriteString(gerarQuadroGeralItem("SMOTMS", qtdBacklogProblemaTmsweb, qtdBacklogMelhoriaTmsweb, qtdTesteProblemaTmsweb, qtdTesteMelhoriaTmsweb, qtdAgMergeTmsweb))
-	buffer.WriteString(gerarQuadroGeralItem("ADM", qtdBacklogProblemaAdm, qtdBacklogMelhoriaAdm, qtdTesteProblemaAdm, qtdTesteMelhoriaAdm, qtdAgMergeAdm))
-	buffer.WriteString(gerarQuadroGeralItem("LOGREV", qtdBacklogProblemaLogrev, qtdBacklogMelhoriaLogrev, qtdTesteProblemaLogrev, qtdTesteMelhoriaLogrev, qtdAgMergeLogrev))
-	buffer.WriteString(gerarQuadroGeralItem("SMONET", qtdBacklogProblemaSmonet, qtdBacklogMelhoriaSmonet, qtdTesteProblemaSmonet, qtdTesteMelhoriaSmonet, qtdAgMergeSmonet))
-	buffer.WriteString(gerarQuadroGeralItem("SMOFRETE", qtdBacklogProblemaTrack, qtdBacklogMelhoriaTrack, qtdTesteProblemaTrack, qtdTesteMelhoriaTrack, qtdAgMergeTrack))
-	buffer.WriteString(gerarQuadroGeralItem("DELPHI", qtdBacklogProblemaDelphi, qtdBacklogMelhoriaDelphi, qtdTesteProblemaDelphi, qtdTesteMelhoriaDelphi, qtdAgMergeDelphi))
-	buffer.WriteString(gerarQuadroGeralItem("Total", qtdBacklogProblemaGeral, qtdBacklogMelhoriaGeral, qtdTesteProblemaGeral, qtdTesteMelhoriaGeral, qtdAgMergeGeral))
+	projetos := projeto.GetProjetos()
+
+	out := make(chan models.Quadro, len(projetos))
+	wg := sync.WaitGroup{}
+
+	for _, p := range projetos {
+		wg.Add(1)
+		go func(projeto projeto.Projeto) {
+			quadro := GerarDadosQuadro(&projeto)
+			quadro.NomeProjeto = projeto.Nome
+			wg.Done()
+			out <- quadro
+		}(p)
+	}
+
+	wg.Wait()
+	close(out)
+
+	var quadros models.Quadros
+
+	for n := range out {
+		quadros = append(quadros, n)
+	}
+
+	sort.Sort(quadros)
+
+	for _, q := range quadros {
+
+		buffer.WriteString(gerarQuadroGeralItem(q.NomeProjeto, &q))
+
+		qtdBacklogProblemaGeral += q.QtdBacklogProblema
+		qtdBacklogMelhoriaGeral += q.QtdBacklogMelhoria
+		qtdTesteProblemaGeral += q.QtdTesteProblema
+		qtdTesteMelhoriaGeral += q.QtdTesteMelhoria
+		qtdAgMergeGeral += q.QtdAgMerge
+	}
+
+	quadroGeral := models.NewQuadro()
+	quadroGeral.QtdBacklogMelhoria = qtdBacklogMelhoriaGeral
+	quadroGeral.QtdBacklogProblema = qtdBacklogProblemaGeral
+	quadroGeral.QtdTesteMelhoria = qtdTesteProblemaGeral
+	quadroGeral.QtdTesteProblema = qtdTesteMelhoriaGeral
+	quadroGeral.QtdAgMerge = qtdAgMergeGeral
+
+	buffer.WriteString(gerarQuadroGeralItem("Total", quadroGeral))
 
 	buffer.WriteString("</table>")
 
 	return buffer.String()
 }
 
-func gerarQuadroGeralItem(produto string, qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria, qtdAgMergeGeral int) string {
+func gerarQuadroGeralItem(produto string, quadro *models.Quadro) string {
 	var buffer bytes.Buffer
 
 	buffer.WriteString("<tr>")
 	buffer.WriteString("<td>" + produto + "</td>")
-	buffer.WriteString("<td>" + strconv.Itoa(qtdBacklogMelhoria) + "</td>")
-	buffer.WriteString("<td>" + strconv.Itoa(qtdBacklogProblema) + "</td>")
-	buffer.WriteString("<td>" + strconv.Itoa(qtdAgMergeGeral) + "</td>")
-	buffer.WriteString("<td>" + strconv.Itoa(qtdTesteProblema+qtdTesteMelhoria) + "</td>")
-	buffer.WriteString("<td>" + strconv.Itoa(qtdBacklogProblema+qtdBacklogMelhoria) + "</td>")
-	if qtdBacklogProblema+qtdBacklogMelhoria > 0 {
-		buffer.WriteString("<td>" + strconv.FormatFloat(((float64(qtdBacklogMelhoria)/float64(qtdBacklogProblema+qtdBacklogMelhoria))*100.0), 'f', 2, 64) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdBacklogMelhoria) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdBacklogProblema) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdAgMerge) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdTesteProblema+quadro.QtdTesteMelhoria) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdBacklogProblema+quadro.QtdBacklogMelhoria) + "</td>")
+	if quadro.QtdBacklogProblema+quadro.QtdBacklogMelhoria > 0 {
+		buffer.WriteString("<td>" + strconv.FormatFloat(((float64(quadro.QtdBacklogMelhoria)/float64(quadro.QtdBacklogProblema+quadro.QtdBacklogMelhoria))*100.0), 'f', 2, 64) + "</td>")
 	} else {
 		buffer.WriteString("<td>0.00</td>")
 	}
-	if qtdBacklogProblema+qtdBacklogMelhoria > 0 {
-		buffer.WriteString("<td>" + strconv.FormatFloat(((float64(qtdBacklogProblema)/float64(qtdBacklogProblema+qtdBacklogMelhoria))*100.0), 'f', 2, 64) + "</td>")
+	if quadro.QtdBacklogProblema+quadro.QtdBacklogMelhoria > 0 {
+		buffer.WriteString("<td>" + strconv.FormatFloat(((float64(quadro.QtdBacklogProblema)/float64(quadro.QtdBacklogProblema+quadro.QtdBacklogMelhoria))*100.0), 'f', 2, 64) + "</td>")
 	} else {
 		buffer.WriteString("<td>0.00</td>")
 	}
@@ -272,31 +157,28 @@ func gerarQuadroGeralItem(produto string, qtdBacklogProblema, qtdBacklogMelhoria
 	return buffer.String()
 }
 
-func gerarQuadro(demandas []models.Demanda, testeFilter, agMergeFilter []int) (qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria, qtdAgMerge int) {
-	qtdBacklogProblema = 0
-	qtdBacklogMelhoria = 0
-	qtdTesteProblema = 0
-	qtdTesteMelhoria = 0
-	qtdAgMerge = 0
+func gerarQuadro(demandas []models.Demanda, testeFilter, agMergeFilter []int) *models.Quadro {
+
+	quadro := models.NewQuadro()
 
 	for _, demanda := range demandas {
 		if arrayContains(demanda.KanbanStatus.KanbanStatusKey, testeFilter) {
 			if demanda.TipoDeTicket.TipoDeTicketKey == 3 {
-				qtdTesteProblema++
+				quadro.QtdTesteProblema++
 			} else {
-				qtdTesteMelhoria++
+				quadro.QtdTesteMelhoria++
 			}
 		} else if arrayContains(demanda.KanbanStatus.KanbanStatusKey, agMergeFilter) {
-			qtdAgMerge++
+			quadro.QtdAgMerge++
 		} else {
 			if demanda.TipoDeTicket.TipoDeTicketKey == 3 {
-				qtdBacklogProblema++
+				quadro.QtdBacklogProblema++
 			} else {
-				qtdBacklogMelhoria++
+				quadro.QtdBacklogMelhoria++
 			}
 		}
 	}
-	return
+	return quadro
 }
 
 func arrayContains(a int, list []int) bool {
@@ -308,7 +190,7 @@ func arrayContains(a int, list []int) bool {
 	return false
 }
 
-func gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema, qtdTesteMelhoria, qtdAgMerge int) string {
+func gerarQuadroString(quadro models.Quadro) string {
 	var buffer bytes.Buffer
 
 	buffer.WriteString("<head>")
@@ -321,23 +203,23 @@ func gerarQuadroString(qtdBacklogProblema, qtdBacklogMelhoria, qtdTesteProblema,
 	buffer.WriteString("<table style=\"width:100%\" class=\"table table-striped table-bordered\">")
 	buffer.WriteString("<tr><th></th><th>Total</th><th>Problema</th><th>Melhoria</th></tr>")
 
-	buffer.WriteString("<tr><td>Backlog</td><td>" + strconv.Itoa(qtdBacklogProblema+qtdBacklogMelhoria) + "</td>")
-	buffer.WriteString("<td>" + strconv.Itoa(qtdBacklogProblema) + "</td>")
-	buffer.WriteString("<td>" + strconv.Itoa(qtdBacklogMelhoria) + "</td></tr>")
+	buffer.WriteString("<tr><td>Backlog</td><td>" + strconv.Itoa(quadro.QtdBacklogProblema+quadro.QtdBacklogMelhoria) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdBacklogProblema) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdBacklogMelhoria) + "</td></tr>")
 
-	if qtdAgMerge > 0 {
-		buffer.WriteString("<tr><td>Ag Merge</td><td>" + strconv.Itoa(qtdAgMerge) + "</td>")
+	if quadro.QtdAgMerge > 0 {
+		buffer.WriteString("<tr><td>Ag Merge</td><td>" + strconv.Itoa(quadro.QtdAgMerge) + "</td>")
 		buffer.WriteString("<td></td>")
 		buffer.WriteString("<td></td></tr>")
 	}
 
-	buffer.WriteString("<tr><td>Em Teste</td><td>" + strconv.Itoa(qtdTesteProblema+qtdTesteMelhoria) + "</td>")
-	buffer.WriteString("<td>" + strconv.Itoa(qtdTesteProblema) + "</td>")
-	buffer.WriteString("<td>" + strconv.Itoa(qtdTesteMelhoria) + "</td></tr>")
+	buffer.WriteString("<tr><td>Em Teste</td><td>" + strconv.Itoa(quadro.QtdTesteProblema+quadro.QtdTesteMelhoria) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdTesteProblema) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdTesteMelhoria) + "</td></tr>")
 
-	buffer.WriteString("<tr><td>Total</td><td>" + strconv.Itoa(qtdBacklogProblema+qtdBacklogMelhoria+qtdTesteProblema+qtdTesteMelhoria+qtdAgMerge) + "</td>")
-	buffer.WriteString("<td>" + strconv.Itoa(qtdTesteProblema+qtdBacklogProblema) + "</td>")
-	buffer.WriteString("<td>" + strconv.Itoa(qtdTesteMelhoria+qtdBacklogMelhoria) + "</td></tr>")
+	buffer.WriteString("<tr><td>Total</td><td>" + strconv.Itoa(quadro.QtdBacklogProblema+quadro.QtdBacklogMelhoria+quadro.QtdTesteProblema+quadro.QtdTesteMelhoria+quadro.QtdAgMerge) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdTesteProblema+quadro.QtdBacklogProblema) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdTesteMelhoria+quadro.QtdBacklogMelhoria) + "</td></tr>")
 
 	buffer.WriteString("</table>")
 

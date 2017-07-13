@@ -1,55 +1,25 @@
 package handlers
 
 import (
-	"fmt"
-	"net/http"
+	macaron "gopkg.in/macaron.v1"
 
 	"github.com/mbier/aceleratomo/acelerato"
+	"github.com/mbier/aceleratomo/projeto"
 )
 
-type HandlerQuadro struct {
+func Quadro(ctx *macaron.Context) {
+
+	projeto, err := projeto.GetProjeto(ctx.Params(":nome"))
+
+	if err != nil {
+		panic(err)
+	}
+
+	ctx.Resp.Header().Set("Content-Type", "text/html")
+	ctx.Resp.Write([]byte(acelerato.GerarQuadro(projeto)))
 }
 
-func NewHandlerQuadro() *HandlerQuadro {
-	return &HandlerQuadro{}
-}
-
-func (c *HandlerQuadro) QuadroTrack(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, acelerato.GerarQuadroTrack())
-}
-
-func (c *HandlerQuadro) QuadroAdm(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, acelerato.GerarQuadroAdm())
-}
-
-func (c *HandlerQuadro) QuadroTMSWEB(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, acelerato.GerarQuadroTMSWEB())
-}
-
-func (c *HandlerQuadro) QuadroSMONET(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, acelerato.GerarQuadroSMONET())
-}
-
-func (c *HandlerQuadro) QuadroSMOWEB(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, acelerato.GerarQuadroSMOWEB())
-}
-
-func (c *HandlerQuadro) QuadroSMOCTE(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, acelerato.GerarQuadroSMOCTE())
-}
-
-func (c *HandlerQuadro) QuadroDelhpi(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, acelerato.GerarQuadroDelphi())
-}
-
-func QuadroGeral(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, acelerato.GerarQuadroGeral())
+func QuadroGeral(ctx *macaron.Context) {
+	ctx.Resp.Header().Set("Content-Type", "text/html")
+	ctx.Resp.Write([]byte(acelerato.GerarQuadroGeral()))
 }

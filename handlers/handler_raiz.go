@@ -1,22 +1,23 @@
 package handlers
 
 import (
-	"fmt"
-	"net/http"
+	"strings"
+
+	"github.com/mbier/aceleratomo/projeto"
+	macaron "gopkg.in/macaron.v1"
 )
 
 // Raiz gerar html para /
-func Raiz(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "<ul>"+
-		"<li><a href=\"/quadro-geral\">Quadro Geral</li>"+
-		"<li><a href=\"/smofrete\">SMOFRETE</li>"+
-		"<li><a href=\"/adm\">Adm</li>"+
-		"<li><a href=\"/tms-web\">TMS-WEB</li>"+
-		"<li><a href=\"/smo-net\">SMO-NET</li>"+
-		"<li><a href=\"/smo-web\">SMO-WEB</li>"+
-		"<li><a href=\"/smo-cte\">SMO-CTE</li>"+
-		"<li><a href=\"/delphi\">DELPHI</li>"+
-		"</ul>")
+func Raiz(ctx *macaron.Context) {
+	html := "<ul>" +
+		"<li><a href=\"/quadro/geral\">Quadro Geral</li>"
+
+	for _, projeto := range projeto.GetProjetos() {
+		html += "<li><a href=\"/quadro/" + strings.ToLower(projeto.Nome) + "\">" + projeto.Nome + "</li>"
+	}
+
+	html += "</ul>"
+
+	ctx.Resp.Header().Set("Content-Type", "text/html")
+	ctx.Resp.Write([]byte(html))
 }
