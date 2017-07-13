@@ -70,6 +70,7 @@ func getProjetoTMSWEB() Projeto {
 	projeto.Nome = "TMSWEB"
 	projeto.URLAcelerato = "https://mosistemas.acelerato.com/api/demandas?projetos=4&categorias=15"
 	projeto.TesteFiltro = []int{19, 20}
+	projeto.AgMergeFiltro = []int{74}
 
 	return projeto
 }
@@ -88,6 +89,7 @@ func getProjetoSMOCTE() Projeto {
 	projeto.Nome = "SMOCTE"
 	projeto.URLAcelerato = "https://mosistemas.acelerato.com/api/demandas?projetos=4&categorias=16"
 	projeto.TesteFiltro = []int{19, 20}
+	projeto.AgMergeFiltro = []int{74}
 
 	return projeto
 }
