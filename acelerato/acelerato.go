@@ -79,7 +79,7 @@ func GerarQuadroGeral() string {
 	buffer.WriteString("</head>")
 
 	buffer.WriteString("<table style=\"width:100%\" class=\"table table-striped table-bordered\">")
-	buffer.WriteString("<tr><th>Produto</th><th>Melhoria</th><th>Problema</th><th>AG. Merge</th><th>AG. Teste</th><th>Total</th><th>&#37; Melhoria</th><th>&#37; Problema</th></tr>")
+	buffer.WriteString("<tr><th>Produto</th><th>Melhoria</th><th>Problema</th><th>AG. Merge</th><th>Impedimento</th><th>AG. Teste</th><th>Total</th><th>&#37; Melhoria</th><th>&#37; Problema</th></tr>")
 
 	projetos := projeto.GetProjetos()
 
@@ -140,6 +140,7 @@ func gerarQuadroGeralItem(produto string, quadro *models.Quadro) string {
 	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdBacklogMelhoria) + "</td>")
 	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdBacklogProblema) + "</td>")
 	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdAgMerge) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdImpedimento) + "</td>")
 	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdTesteProblema+quadro.QtdTesteMelhoria) + "</td>")
 	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdBacklogProblema+quadro.QtdBacklogMelhoria) + "</td>")
 	if quadro.QtdBacklogProblema+quadro.QtdBacklogMelhoria > 0 {
@@ -162,7 +163,9 @@ func gerarQuadro(demandas []models.Demanda, testeFilter, agMergeFilter []int) *m
 	quadro := models.NewQuadro()
 
 	for _, demanda := range demandas {
-		if arrayContains(demanda.KanbanStatus.KanbanStatusKey, testeFilter) {
+		if demanda.UsuarioImpedimento.Nome != "" {
+			quadro.QtdImpedimento++
+		} else if arrayContains(demanda.KanbanStatus.KanbanStatusKey, testeFilter) {
 			if demanda.TipoDeTicket.TipoDeTicketKey == 3 {
 				quadro.QtdTesteProblema++
 			} else {
@@ -209,6 +212,12 @@ func gerarQuadroString(quadro models.Quadro) string {
 
 	if quadro.QtdAgMerge > 0 {
 		buffer.WriteString("<tr><td>Ag Merge</td><td>" + strconv.Itoa(quadro.QtdAgMerge) + "</td>")
+		buffer.WriteString("<td></td>")
+		buffer.WriteString("<td></td></tr>")
+	}
+
+	if quadro.QtdImpedimento > 0 {
+		buffer.WriteString("<tr><td>Impedimento</td><td>" + strconv.Itoa(quadro.QtdImpedimento) + "</td>")
 		buffer.WriteString("<td></td>")
 		buffer.WriteString("<td></td></tr>")
 	}

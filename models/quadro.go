@@ -8,6 +8,7 @@ type Quadro struct {
 	QtdTesteProblema   int
 	QtdTesteMelhoria   int
 	QtdAgMerge         int
+	QtdImpedimento     int
 }
 
 // Quadros lista de quadro
@@ -33,10 +34,11 @@ func NewQuadro() *Quadro {
 	q.QtdTesteProblema = 0
 	q.QtdTesteMelhoria = 0
 	q.QtdAgMerge = 0
+	q.QtdImpedimento = 0
 	return q
 }
 
 // Total retorna a soma de todos os indicadores
 func (q *Quadro) Total() int {
-	return q.QtdBacklogProblema + q.QtdBacklogMelhoria + q.QtdTesteProblema + q.QtdTesteMelhoria + q.QtdAgMerge
+	return q.QtdBacklogProblema + q.QtdBacklogMelhoria + q.QtdTesteProblema + q.QtdTesteMelhoria + q.QtdAgMerge + q.QtdImpedimento
 }

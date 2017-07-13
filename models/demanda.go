@@ -39,6 +39,14 @@ type Demanda struct {
 		Fila            bool   `json:"fila"`
 		Ordem           int    `json:"ordem"`
 	} `json:"kanbanStatus"`
+	UsuarioImpedimento struct {
+		Nome           string `json:"nome"`
+		UsuarioEquipes []struct {
+			EquipeKey    int    `json:"equipeKey"`
+			Nome         string `json:"nome"`
+			TipoDeEquipe string `json:"tipoDeEquipe"`
+		} `json:"usuarioEquipes"`
+	} `json:"usuarioImpedimento,omitempty"`
 	Reporter struct {
 		UsuarioKey     int    `json:"usuarioKey"`
 		AvatarPath     string `json:"avatarPath"`
