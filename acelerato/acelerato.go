@@ -67,7 +67,7 @@ func GerarDadosQuadro(projeto *projeto.Projeto) (quadro models.Quadro) {
 // GerarQuadroGeral gera as informacoes do track
 func GerarQuadroGeral() string {
 
-	var qtdBacklogProblemaGeral, qtdBacklogMelhoriaGeral, qtdTesteProblemaGeral, qtdTesteMelhoriaGeral, qtdAgMergeGeral int
+	var qtdBacklogProblemaGeral, qtdBacklogMelhoriaGeral, qtdTesteProblemaGeral, qtdTesteMelhoriaGeral, qtdAgMergeGeral, qtdImpedimentoGeral int
 
 	var buffer bytes.Buffer
 
@@ -79,7 +79,7 @@ func GerarQuadroGeral() string {
 	buffer.WriteString("</head>")
 
 	buffer.WriteString("<table style=\"width:100%\" class=\"table table-striped table-bordered\">")
-	buffer.WriteString("<tr><th>Produto</th><th>Melhoria</th><th>Problema</th><th>AG. Merge</th><th>Impedimento</th><th>AG. Teste</th><th>Total</th><th>&#37; Melhoria</th><th>&#37; Problema</th></tr>")
+	buffer.WriteString("<tr><th>Produto</th><th>Melhoria</th><th>Problema</th><th>AG. Merge</th><th>AG. Teste</th><th>Total</th><th>&#37; Melhoria</th><th>&#37; Problema</th><th style=\"width: 50px;\">Impedimento</th></tr>")
 
 	projetos := projeto.GetProjetos()
 
@@ -116,6 +116,7 @@ func GerarQuadroGeral() string {
 		qtdTesteProblemaGeral += q.QtdTesteProblema
 		qtdTesteMelhoriaGeral += q.QtdTesteMelhoria
 		qtdAgMergeGeral += q.QtdAgMerge
+		qtdImpedimentoGeral += q.QtdImpedimento
 	}
 
 	quadroGeral := models.NewQuadro()
@@ -124,6 +125,7 @@ func GerarQuadroGeral() string {
 	quadroGeral.QtdTesteMelhoria = qtdTesteProblemaGeral
 	quadroGeral.QtdTesteProblema = qtdTesteMelhoriaGeral
 	quadroGeral.QtdAgMerge = qtdAgMergeGeral
+	quadroGeral.QtdImpedimento = qtdImpedimentoGeral
 
 	buffer.WriteString(gerarQuadroGeralItem("Total", quadroGeral))
 
@@ -140,7 +142,6 @@ func gerarQuadroGeralItem(produto string, quadro *models.Quadro) string {
 	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdBacklogMelhoria) + "</td>")
 	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdBacklogProblema) + "</td>")
 	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdAgMerge) + "</td>")
-	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdImpedimento) + "</td>")
 	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdTesteProblema+quadro.QtdTesteMelhoria) + "</td>")
 	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdBacklogProblema+quadro.QtdBacklogMelhoria) + "</td>")
 	if quadro.QtdBacklogProblema+quadro.QtdBacklogMelhoria > 0 {
@@ -153,6 +154,7 @@ func gerarQuadroGeralItem(produto string, quadro *models.Quadro) string {
 	} else {
 		buffer.WriteString("<td>0.00</td>")
 	}
+	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdImpedimento) + "</td>")
 	buffer.WriteString("</tr>")
 
 	return buffer.String()
