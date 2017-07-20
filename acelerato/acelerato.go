@@ -354,19 +354,19 @@ func gerarQuadroTesteItem(produto string, quadro models.Quadro) string {
 	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdAgMerge) + "</td>")
 
 	if quadro.QtdAgTestePB > 0 {
-		buffer.WriteString("<td style=\"background-color: red;\">" + strconv.Itoa(quadro.TotalAgTeste()) + " (" + strconv.Itoa(quadro.QtdAgTestePB) + ")" + "</td>")
+		buffer.WriteString("<td style=\"background-color: red; color: white;\">" + strconv.Itoa(quadro.TotalAgTeste()) + " (" + strconv.Itoa(quadro.QtdAgTestePB) + ")" + "</td>")
 	} else {
 		buffer.WriteString("<td>" + strconv.Itoa(quadro.TotalAgTeste()) + " (" + strconv.Itoa(quadro.QtdAgTestePB) + ")" + "</td>")
 	}
 
 	if quadro.QtdEmTestePB > 0 {
-		buffer.WriteString("<td style=\"background-color: red;\">" + strconv.Itoa(quadro.TotalEmTeste()) + " (" + strconv.Itoa(quadro.QtdEmTestePB) + ")" + "</td>")
+		buffer.WriteString("<td style=\"background-color: red; color: white;\">" + strconv.Itoa(quadro.TotalEmTeste()) + " (" + strconv.Itoa(quadro.QtdEmTestePB) + ")" + "</td>")
 	} else {
 		buffer.WriteString("<td>" + strconv.Itoa(quadro.TotalEmTeste()) + " (" + strconv.Itoa(quadro.QtdEmTestePB) + ")" + "</td>")
 	}
 	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdRecusado) + "</td>")
 	if quadro.QtdBlocante > 0 {
-		buffer.WriteString("<td style=\"background-color: red;\">" + strconv.Itoa(quadro.QtdBlocante) + "</td>")
+		buffer.WriteString("<td style=\"background-color: red; color: white;\">" + strconv.Itoa(quadro.QtdBlocante) + "</td>")
 	} else {
 		buffer.WriteString("<td>0</td>")
 	}
