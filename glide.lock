@@ -1,27 +1,36 @@
 hash: d99ffc022d144e308c6e6814b6a22ddc4ef7f7ecc397b64bd84bad32d590f311
-updated: 2017-07-01T17:26:47.530849268-03:00
+updated: 2017-07-17T23:10:18.774363736-03:00
 imports:
-- name: github.com/go-macaron/gzip
-  version: cad1c6580a07c56f5f6bc52d66002a05985c5854
-- name: github.com/go-macaron/inject
-  version: d8a0b8677191f4380287cfebd08e462217bac7ad
-- name: github.com/klauspost/compress
-  version: f3dce52e0576655d55fd69e74b63da96ad1108f3
+- name: github.com/dgrijalva/jwt-go
+  version: a539ee1a749a2b895533f979515ac7e6e0f5b650
+- name: github.com/labstack/echo
+  version: a5c75b002d4ff1d0b2886fa675464e675f2ec140
   subpackages:
-  - flate
-  - gzip
-- name: github.com/klauspost/cpuid
-  version: 09cded8978dc9e80714c4d85b0322337b0a1e5e0
-- name: github.com/Unknwon/com
-  version: 0db4a625e949e956314d7d1adea9bf82384cc10c
+  - middleware
+- name: github.com/labstack/gommon
+  version: 779b8a8b9850a97acba6a3fe20feb628c39e17c1
+  subpackages:
+  - bytes
+  - color
+  - log
+  - random
+- name: github.com/mattn/go-colorable
+  version: 3fa8c76f9daed4067e4a806fb7e4dc86455c6d6a
+- name: github.com/mattn/go-isatty
+  version: fc9e8d8ef48496124e79ae0df75490096eccf6fe
+- name: github.com/valyala/bytebufferpool
+  version: e746df99fe4a3986f4d4f79e13c1e0117ce9c2f7
+- name: github.com/valyala/fasttemplate
+  version: dcecefd839c4193db0d35b88ec65b4c12d360ab0
 - name: golang.org/x/crypto
   version: 5ef0053f77724838734b6945dd364d3847e5de1d
   subpackages:
-  - pbkdf2
-- name: gopkg.in/ini.v1
-  version: d3de07a94d22b4a0972deb4b96d790c2c0ce8333
-- name: gopkg.in/macaron.v1
-  version: a325110f8b392bce3e5cdeb8c44bf98078ada3be
+  - acme
+  - acme/autocert
+- name: golang.org/x/sys
+  version: 4cd6d1a821c7175768725b55ca82f14683a29ea4
+  subpackages:
+  - unix
 testImports:
 - name: github.com/stretchr/testify
   version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0

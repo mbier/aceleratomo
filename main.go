@@ -1,20 +1,27 @@
 package main
 
 import (
-	"github.com/go-macaron/gzip"
-	macaron "gopkg.in/macaron.v1"
+	"os"
 
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 	"github.com/mbier/aceleratomo/handlers"
 )
 
 func main() {
 
-	m := macaron.New()
-	m.Use(gzip.Gziper())
+	e := echo.New()
+	e.Use(middleware.Gzip())
 
-	m.Get("/", handlers.Raiz)
-	m.Get("/quadro/geral", handlers.QuadroGeral)
-	m.Get("/quadro/:nome", handlers.Quadro)
+	e.GET("/", handlers.Raiz)
+	e.GET("/quadro/geral", handlers.QuadroGeral)
+	e.GET("/quadro/testes", handlers.QuadroTestes)
+	e.GET("/quadro/:nome", handlers.Quadro)
 
-	m.Run()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "6969"
+	}
+
+	e.Start(":" + port)
 }

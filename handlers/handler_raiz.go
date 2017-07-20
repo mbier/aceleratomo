@@ -3,14 +3,17 @@ package handlers
 import (
 	"strings"
 
+	"net/http"
+
+	"github.com/labstack/echo"
 	"github.com/mbier/aceleratomo/projeto"
-	macaron "gopkg.in/macaron.v1"
 )
 
 // Raiz gerar html para /
-func Raiz(ctx *macaron.Context) {
+func Raiz(c echo.Context) error {
 	html := "<ul>" +
-		"<li><a href=\"/quadro/geral\">Quadro Geral</li>"
+		"<li><a href=\"/quadro/geral\">Quadro Geral</li>" +
+		"<li><a href=\"/quadro/testes\">Quadro Testes</li>"
 
 	for _, projeto := range projeto.GetProjetos() {
 		html += "<li><a href=\"/quadro/" + strings.ToLower(projeto.Nome) + "\">" + projeto.Nome + "</li>"
@@ -18,6 +21,5 @@ func Raiz(ctx *macaron.Context) {
 
 	html += "</ul>"
 
-	ctx.Resp.Header().Set("Content-Type", "text/html")
-	ctx.Resp.Write([]byte(html))
+	return c.HTML(http.StatusOK, html)
 }

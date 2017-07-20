@@ -2,10 +2,13 @@ package projeto
 
 // Projeto do acelerato
 type Projeto struct {
-	Nome          string
-	URLAcelerato  string
-	TesteFiltro   []int
-	AgMergeFiltro []int
+	Nome                    string
+	URLAcelerato            string
+	EmDesenvolvimentoFiltro []int
+	AgMergeFiltro           []int
+	AgTesteFiltro           []int
+	EmTesteFiltro           []int
+	Grupo                   Grupo
 }
 
 // Projetos lista de projetos

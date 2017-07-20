@@ -1,25 +1,31 @@
 package handlers
 
 import (
-	macaron "gopkg.in/macaron.v1"
+	"net/http"
 
+	"github.com/labstack/echo"
 	"github.com/mbier/aceleratomo/acelerato"
 	"github.com/mbier/aceleratomo/projeto"
 )
 
-func Quadro(ctx *macaron.Context) {
+// Quadro gera uma quadro do projeto passado por parametro
+func Quadro(c echo.Context) error {
 
-	projeto, err := projeto.GetProjeto(ctx.Params(":nome"))
+	projeto, err := projeto.GetProjeto(c.Param("nome"))
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	ctx.Resp.Header().Set("Content-Type", "text/html")
-	ctx.Resp.Write([]byte(acelerato.GerarQuadro(projeto)))
+	return c.HTML(http.StatusOK, acelerato.GerarQuadro(projeto))
 }
 
-func QuadroGeral(ctx *macaron.Context) {
-	ctx.Resp.Header().Set("Content-Type", "text/html")
-	ctx.Resp.Write([]byte(acelerato.GerarQuadroGeral()))
+// QuadroGeral gera um quadro com todos os projetos
+func QuadroGeral(c echo.Context) error {
+	return c.HTML(http.StatusOK, acelerato.GerarQuadroGeral())
+}
+
+// QuadroTestes gera um quadro especifico para testes com todos os projetos
+func QuadroTestes(c echo.Context) error {
+	return c.HTML(http.StatusOK, acelerato.GerarQuadroTestes())
 }
