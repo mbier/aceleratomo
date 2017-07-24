@@ -12,6 +12,8 @@ func main() {
 
 	e := echo.New()
 	e.Use(middleware.Gzip())
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
 	e.GET("/", handlers.Raiz)
 	e.GET("/quadro/geral", handlers.QuadroGeral)
@@ -23,5 +25,5 @@ func main() {
 		port = "6969"
 	}
 
-	e.Start(":" + port)
+	e.Logger.Fatal(e.Start(":" + port))
 }
