@@ -59,7 +59,7 @@ func GerarQuadro(projeto *projeto.Projeto) string {
 func GerarDadosQuadro(projeto *projeto.Projeto) (quadro models.Quadro) {
 	demandas := getDemandasProjeto(projeto)
 
-	quadro = *gerarQuadro(demandas, *projeto)
+	quadro = gerarQuadro(demandas, *projeto)
 
 	return
 }
@@ -115,19 +115,19 @@ func GerarQuadroGeral() string {
 		qtdBacklogMelhoriaGeral += q.TotalBacklogM()
 		qtdTesteProblemaGeral += q.TotalTesteP()
 		qtdTesteMelhoriaGeral += q.TotalTesteM()
-		qtdAgMergeGeral += q.QtdAgMerge
+		qtdAgMergeGeral += q.TotalAgMerge()
 		qtdImpedimentoGeral += q.QtdImpedimento
 	}
 
 	quadroGeral := models.NewQuadro()
-	quadroGeral.QtdAprovadoM = qtdBacklogMelhoriaGeral
-	quadroGeral.QtdAprovadoP = qtdBacklogProblemaGeral
-	quadroGeral.QtdEmTesteP = qtdTesteProblemaGeral
-	quadroGeral.QtdEmTesteM = qtdTesteMelhoriaGeral
-	quadroGeral.QtdAgMerge = qtdAgMergeGeral
+	quadroGeral.Aprovado.QtdMelhoria = qtdBacklogMelhoriaGeral
+	quadroGeral.Aprovado.QtdProblema = qtdBacklogProblemaGeral
+	quadroGeral.EmTeste.QtdProblema = qtdTesteProblemaGeral
+	quadroGeral.EmTeste.QtdMelhoria = qtdTesteMelhoriaGeral
+	quadroGeral.AgMerge.QtdMelhoria = qtdAgMergeGeral
 	quadroGeral.QtdImpedimento = qtdImpedimentoGeral
 
-	buffer.WriteString(gerarQuadroGeralItem("Total", quadroGeral))
+	buffer.WriteString(gerarQuadroGeralItem("Total", &quadroGeral))
 
 	buffer.WriteString("</table>")
 
@@ -141,7 +141,7 @@ func gerarQuadroGeralItem(produto string, quadro *models.Quadro) string {
 	buffer.WriteString("<td>" + produto + "</td>")
 	buffer.WriteString("<td>" + strconv.Itoa(quadro.TotalBacklogM()) + "</td>")
 	buffer.WriteString("<td>" + strconv.Itoa(quadro.TotalBacklogP()) + "</td>")
-	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdAgMerge) + "</td>")
+	buffer.WriteString("<td>" + strconv.Itoa(quadro.TotalAgMerge()) + "</td>")
 	buffer.WriteString("<td>" + strconv.Itoa(quadro.TotalTeste()) + "</td>")
 	buffer.WriteString("<td>" + strconv.Itoa(quadro.TotalBacklog()) + "</td>")
 	if quadro.TotalBacklog() > 0 {
@@ -157,60 +157,87 @@ func gerarQuadroGeralItem(produto string, quadro *models.Quadro) string {
 	return buffer.String()
 }
 
-func gerarQuadro(demandas []models.Demanda, projeto projeto.Projeto) *models.Quadro {
+func gerarQuadro(demandas []models.Demanda, projeto projeto.Projeto) models.Quadro {
 
 	quadro := models.NewQuadro()
 
 	for _, demanda := range demandas {
-		if demanda.UsuarioImpedimento.Nome != "" {
-			quadro.QtdImpedimento++
-		} else if arrayContains(demanda.KanbanStatus.KanbanStatusKey, projeto.AgTesteFiltro) {
-			if demanda.TipoDeTicket.TipoDeTicketKey == 3 {
-				if demanda.TipoDePrioridade.Descricao == "Blocante" {
-					quadro.QtdAgTestePB++
-				} else {
-					quadro.QtdAgTesteP++
-				}
-			} else {
-				quadro.QtdAgTesteM++
-			}
-		} else if arrayContains(demanda.KanbanStatus.KanbanStatusKey, projeto.EmTesteFiltro) {
-			if demanda.TipoDeTicket.TipoDeTicketKey == 3 {
-				if demanda.TipoDePrioridade.Descricao == "Blocante" {
-					quadro.QtdEmTestePB++
-				} else {
-					quadro.QtdEmTesteP++
-				}
-			} else {
-				quadro.QtdEmTesteM++
-			}
-		} else if arrayContains(demanda.KanbanStatus.KanbanStatusKey, projeto.EmDesenvolvimentoFiltro) {
-			if demanda.TipoDeTicket.TipoDeTicketKey == 3 {
-				quadro.QtdEmDesenvolvimentoP++
-			} else {
-				quadro.QtdEmDesenvolvimentoM++
-			}
-		} else if arrayContains(demanda.KanbanStatus.KanbanStatusKey, projeto.AgMergeFiltro) {
-			quadro.QtdAgMerge++
-		} else {
-			if demanda.TipoDeTicket.TipoDeTicketKey == 3 {
-				quadro.QtdAprovadoP++
-			} else {
-				quadro.QtdAprovadoM++
-			}
-		}
 
+		isBlocante := demanda.TipoDePrioridade.Descricao == "Blocante"
+
+		isRecusado := false
 		for _, tag := range demanda.Tags {
 			if tag.Tag == "recusado" {
-				quadro.QtdRecusado++
+				isRecusado = true
 				break
 			}
 		}
 
-		if demanda.TipoDePrioridade.Descricao == "Blocante" {
-			quadro.QtdBlocante++
+		if demanda.UsuarioImpedimento.Nome != "" {
+			quadro.QtdImpedimento++
+		} else if arrayContains(demanda.KanbanStatus.KanbanStatusKey, projeto.AgTesteFiltro) {
+			if demanda.TipoDeTicket.TipoDeTicketKey == 3 {
+				quadro.AgTeste.QtdProblema++
+			} else {
+				quadro.AgTeste.QtdMelhoria++
+			}
+			if isBlocante {
+				quadro.AgTeste.QtdBlocante++
+			}
+			if isRecusado {
+				quadro.AgTeste.QtdRecusado++
+			}
+		} else if arrayContains(demanda.KanbanStatus.KanbanStatusKey, projeto.EmTesteFiltro) {
+			if demanda.TipoDeTicket.TipoDeTicketKey == 3 {
+				quadro.EmTeste.QtdProblema++
+			} else {
+				quadro.EmTeste.QtdMelhoria++
+			}
+			if isBlocante {
+				quadro.EmTeste.QtdBlocante++
+			}
+			if isRecusado {
+				quadro.EmTeste.QtdRecusado++
+			}
+		} else if arrayContains(demanda.KanbanStatus.KanbanStatusKey, projeto.EmDesenvolvimentoFiltro) {
+			if demanda.TipoDeTicket.TipoDeTicketKey == 3 {
+				quadro.EmDesenvolvimento.QtdProblema++
+			} else {
+				quadro.EmDesenvolvimento.QtdMelhoria++
+			}
+			if isBlocante {
+				quadro.EmDesenvolvimento.QtdBlocante++
+			}
+			if isRecusado {
+				quadro.EmDesenvolvimento.QtdRecusado++
+			}
+		} else if arrayContains(demanda.KanbanStatus.KanbanStatusKey, projeto.AgMergeFiltro) {
+			if demanda.TipoDeTicket.TipoDeTicketKey == 3 {
+				quadro.AgMerge.QtdProblema++
+			} else {
+				quadro.AgMerge.QtdMelhoria++
+			}
+			if isBlocante {
+				quadro.AgMerge.QtdBlocante++
+			}
+			if isRecusado {
+				quadro.AgMerge.QtdRecusado++
+			}
+		} else {
+			if demanda.TipoDeTicket.TipoDeTicketKey == 3 {
+				quadro.Aprovado.QtdProblema++
+			} else {
+				quadro.Aprovado.QtdMelhoria++
+			}
+			if isBlocante {
+				quadro.Aprovado.QtdBlocante++
+			}
+			if isRecusado {
+				quadro.Aprovado.QtdRecusado++
+			}
 		}
 	}
+
 	return quadro
 }
 
@@ -240,8 +267,8 @@ func gerarQuadroString(quadro models.Quadro) string {
 	buffer.WriteString("<td>" + strconv.Itoa(quadro.TotalBacklogP()) + "</td>")
 	buffer.WriteString("<td>" + strconv.Itoa(quadro.TotalBacklogM()) + "</td></tr>")
 
-	if quadro.QtdAgMerge > 0 {
-		buffer.WriteString("<tr><td>Ag Merge</td><td>" + strconv.Itoa(quadro.QtdAgMerge) + "</td>")
+	if quadro.TotalAgMerge() > 0 {
+		buffer.WriteString("<tr><td>Ag Merge</td><td>" + strconv.Itoa(quadro.TotalAgMerge()) + "</td>")
 		buffer.WriteString("<td></td>")
 		buffer.WriteString("<td></td></tr>")
 	}
@@ -278,7 +305,7 @@ func GerarQuadroTestes() string {
 	buffer.WriteString("</head>")
 
 	buffer.WriteString("<table style=\"width:100%\" class=\"table table-striped table-bordered\">")
-	buffer.WriteString("<tr><th>Equipe</th><th>Desenv</th><th>AG. Merge</th><th>AG. Teste</th><th>Em Teste</th><th>Recusado</th><th>Blocante</th></tr>")
+	buffer.WriteString("<tr><th>Equipe</th><th>Desenv</th><th>AG. Merge</th><th>AG. Teste</th><th>Em Teste</th></tr>")
 
 	projetos := projeto.GetProjetos()
 
@@ -312,20 +339,12 @@ func GerarQuadroTestes() string {
 
 		quadroGrupo.Projeto.Nome = q.Projeto.Grupo.ToString()
 
-		quadroGrupo.QtdAprovadoP += q.QtdAprovadoP
-		quadroGrupo.QtdAprovadoM += q.QtdAprovadoM
-		quadroGrupo.QtdEmDesenvolvimentoP += q.QtdEmDesenvolvimentoP
-		quadroGrupo.QtdEmDesenvolvimentoM += q.QtdEmDesenvolvimentoM
-		quadroGrupo.QtdAgMerge += q.QtdAgMerge
+		quadroGrupo.Aprovado.Merge(q.Aprovado)
+		quadroGrupo.EmDesenvolvimento.Merge(q.EmDesenvolvimento)
+		quadroGrupo.AgMerge.Merge(q.AgMerge)
+		quadroGrupo.AgTeste.Merge(q.AgTeste)
+		quadroGrupo.EmTeste.Merge(q.EmTeste)
 		quadroGrupo.QtdImpedimento += q.QtdImpedimento
-		quadroGrupo.QtdAgTesteP += q.QtdAgTesteP
-		quadroGrupo.QtdAgTestePB += q.QtdAgTestePB
-		quadroGrupo.QtdAgTesteM += q.QtdAgTesteM
-		quadroGrupo.QtdEmTesteP += q.QtdEmTesteP
-		quadroGrupo.QtdEmTestePB += q.QtdEmTestePB
-		quadroGrupo.QtdEmTesteM += q.QtdEmTesteM
-		quadroGrupo.QtdRecusado += q.QtdRecusado
-		quadroGrupo.QtdBlocante += q.QtdBlocante
 
 		grupoProjetos[q.Projeto.Grupo] = quadroGrupo
 	}
@@ -342,6 +361,8 @@ func GerarQuadroTestes() string {
 
 	buffer.WriteString("</table>")
 
+	buffer.WriteString("<div style=\"text-align: center;\"> B = Blocante / R = Recusa</div>")
+
 	return buffer.String()
 }
 
@@ -350,25 +371,25 @@ func gerarQuadroTesteItem(produto string, quadro models.Quadro) string {
 
 	buffer.WriteString("<tr>")
 	buffer.WriteString("<td>" + produto + "</td>")
-	buffer.WriteString("<td>" + strconv.Itoa(quadro.TotalEmDesenvolvimento()) + "</td>")
-	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdAgMerge) + "</td>")
-
-	if quadro.QtdAgTestePB > 0 {
-		buffer.WriteString("<td style=\"background-color: red; color: white;\">" + strconv.Itoa(quadro.TotalAgTeste()) + " (" + strconv.Itoa(quadro.QtdAgTestePB) + ")" + "</td>")
+	if quadro.EmDesenvolvimento.QtdBlocante > 0 {
+		buffer.WriteString("<td style=\"background-color: red; color: white;\">" + strconv.Itoa(quadro.EmDesenvolvimento.Total()) + " (B:" + strconv.Itoa(quadro.EmDesenvolvimento.QtdBlocante) + " R:" + strconv.Itoa(quadro.EmDesenvolvimento.QtdRecusado) + ")" + "</td>")
 	} else {
-		buffer.WriteString("<td>" + strconv.Itoa(quadro.TotalAgTeste()) + " (" + strconv.Itoa(quadro.QtdAgTestePB) + ")" + "</td>")
+		buffer.WriteString("<td>" + strconv.Itoa(quadro.EmDesenvolvimento.Total()) + " (B:" + strconv.Itoa(quadro.EmDesenvolvimento.QtdBlocante) + " R:" + strconv.Itoa(quadro.EmDesenvolvimento.QtdRecusado) + ")" + "</td>")
 	}
-
-	if quadro.QtdEmTestePB > 0 {
-		buffer.WriteString("<td style=\"background-color: red; color: white;\">" + strconv.Itoa(quadro.TotalEmTeste()) + " (" + strconv.Itoa(quadro.QtdEmTestePB) + ")" + "</td>")
+	if quadro.AgMerge.QtdBlocante > 0 {
+		buffer.WriteString("<td style=\"background-color: red; color: white;\">" + strconv.Itoa(quadro.AgMerge.Total()) + " (B:" + strconv.Itoa(quadro.AgMerge.QtdBlocante) + " R:" + strconv.Itoa(quadro.AgMerge.QtdRecusado) + ")" + "</td>")
 	} else {
-		buffer.WriteString("<td>" + strconv.Itoa(quadro.TotalEmTeste()) + " (" + strconv.Itoa(quadro.QtdEmTestePB) + ")" + "</td>")
+		buffer.WriteString("<td>" + strconv.Itoa(quadro.AgMerge.Total()) + " (B:" + strconv.Itoa(quadro.AgMerge.QtdBlocante) + " R:" + strconv.Itoa(quadro.AgMerge.QtdRecusado) + ")" + "</td>")
 	}
-	buffer.WriteString("<td>" + strconv.Itoa(quadro.QtdRecusado) + "</td>")
-	if quadro.QtdBlocante > 0 {
-		buffer.WriteString("<td style=\"background-color: red; color: white;\">" + strconv.Itoa(quadro.QtdBlocante) + "</td>")
+	if quadro.AgTeste.QtdBlocante > 0 {
+		buffer.WriteString("<td style=\"background-color: red; color: white;\">" + strconv.Itoa(quadro.AgTeste.Total()) + " (B:" + strconv.Itoa(quadro.AgTeste.QtdBlocante) + " R:" + strconv.Itoa(quadro.AgTeste.QtdRecusado) + ")" + "</td>")
 	} else {
-		buffer.WriteString("<td>0</td>")
+		buffer.WriteString("<td>" + strconv.Itoa(quadro.AgTeste.Total()) + " (B:" + strconv.Itoa(quadro.AgTeste.QtdBlocante) + " R:" + strconv.Itoa(quadro.AgTeste.QtdRecusado) + ")" + "</td>")
+	}
+	if quadro.EmTeste.QtdBlocante > 0 {
+		buffer.WriteString("<td style=\"background-color: red; color: white;\">" + strconv.Itoa(quadro.EmTeste.Total()) + " (B:" + strconv.Itoa(quadro.EmTeste.QtdBlocante) + " R:" + strconv.Itoa(quadro.EmTeste.QtdRecusado) + ")" + "</td>")
+	} else {
+		buffer.WriteString("<td>" + strconv.Itoa(quadro.EmTeste.Total()) + " (B:" + strconv.Itoa(quadro.EmTeste.QtdBlocante) + " R:" + strconv.Itoa(quadro.EmTeste.QtdRecusado) + ")" + "</td>")
 	}
 	buffer.WriteString("</tr>")
 
