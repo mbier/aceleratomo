@@ -1,12 +1,22 @@
 hash: d99ffc022d144e308c6e6814b6a22ddc4ef7f7ecc397b64bd84bad32d590f311
-updated: 2017-07-17T23:10:18.774363736-03:00
+updated: 2017-07-26T22:19:18.277568377-03:00
 imports:
+- name: github.com/dghubble/sling
+  version: 80ec33c6152a53edb5545864ca37567b506c4ca5
 - name: github.com/dgrijalva/jwt-go
   version: a539ee1a749a2b895533f979515ac7e6e0f5b650
+- name: github.com/google/go-querystring
+  version: 53e6ce116135b80d037921a7fdd5138cf32d7a8a
+  subpackages:
+  - query
 - name: github.com/labstack/echo
   version: a5c75b002d4ff1d0b2886fa675464e675f2ec140
   subpackages:
   - middleware
+- name: github.com/labstack/echo-contrib
+  version: c43bc4a1577d32bc1c485cb435aedf3e19d1bf14
+  subpackages:
+  - cube
 - name: github.com/labstack/gommon
   version: 779b8a8b9850a97acba6a3fe20feb628c39e17c1
   subpackages:
@@ -14,6 +24,8 @@ imports:
   - color
   - log
   - random
+- name: github.com/labstack/labstack-go
+  version: 8e17683226c9b3cffadf42bcf5e59ad52ff515e5
 - name: github.com/mattn/go-colorable
   version: 3fa8c76f9daed4067e4a806fb7e4dc86455c6d6a
 - name: github.com/mattn/go-isatty
