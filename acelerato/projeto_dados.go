@@ -1,104 +1,104 @@
-package models
+package acelerato
 
 import (
 	"github.com/mbier/aceleratomo/projeto"
 )
 
-// Quadro é objeto de retorno da demanda do acelerato
-type Quadro struct {
+// ProjetoDado é objeto de retorno da demanda do acelerato
+type ProjetoDado struct {
 	Projeto           projeto.Projeto
-	Aprovado          QuadroItem
-	EmDesenvolvimento QuadroItem
-	AgMerge           QuadroItem
+	Aprovado          CategoriaDado
+	EmDesenvolvimento CategoriaDado
+	AgMerge           CategoriaDado
 	QtdImpedimento    int
-	AgTeste           QuadroItem
-	EmTeste           QuadroItem
+	AgTeste           CategoriaDado
+	EmTeste           CategoriaDado
 }
 
-// Quadros lista de quadro
-type Quadros []Quadro
+// ProjetosDado lista de quadro
+type ProjetosDado []ProjetoDado
 
-func (q Quadros) Len() int {
+func (q ProjetosDado) Len() int {
 	return len(q)
 }
 
-func (q Quadros) Less(i, j int) bool {
+func (q ProjetosDado) Less(i, j int) bool {
 	return q[i].Projeto.Nome < q[j].Projeto.Nome
 }
 
-func (q Quadros) Swap(i, j int) {
+func (q ProjetosDado) Swap(i, j int) {
 	q[i], q[j] = q[j], q[i]
 }
 
-// NewQuadro gerar um novo Quadro
-func NewQuadro() Quadro {
-	q := Quadro{}
-	q.Aprovado = NewQuadroItem()
-	q.EmDesenvolvimento = NewQuadroItem()
-	q.AgMerge = NewQuadroItem()
+// NewProjetoDado gerar um novo Quadro
+func NewProjetoDado() ProjetoDado {
+	q := ProjetoDado{}
+	q.Aprovado = NewCategoriaDado()
+	q.EmDesenvolvimento = NewCategoriaDado()
+	q.AgMerge = NewCategoriaDado()
 	q.QtdImpedimento = 0
-	q.AgTeste = NewQuadroItem()
-	q.EmTeste = NewQuadroItem()
+	q.AgTeste = NewCategoriaDado()
+	q.EmTeste = NewCategoriaDado()
 
 	return q
 }
 
 // TotalAprovado retorna a soma de aprovados
-func (q *Quadro) TotalAprovado() int {
+func (q *ProjetoDado) TotalAprovado() int {
 	return q.Aprovado.Total()
 }
 
 // TotalEmDesenvolvimento retorna a soma de Em Desenvolvimento
-func (q *Quadro) TotalEmDesenvolvimento() int {
+func (q *ProjetoDado) TotalEmDesenvolvimento() int {
 	return q.EmDesenvolvimento.Total()
 }
 
 // TotalAgTeste retorna a soma de Ag Teste
-func (q *Quadro) TotalAgTeste() int {
+func (q *ProjetoDado) TotalAgTeste() int {
 	return q.AgTeste.Total()
 }
 
 // TotalEmTeste retorna a soma de Em Teste
-func (q *Quadro) TotalEmTeste() int {
+func (q *ProjetoDado) TotalEmTeste() int {
 	return q.EmTeste.Total()
 }
 
 // TotalBacklog retorna a soma de backlog
-func (q *Quadro) TotalBacklog() int {
+func (q *ProjetoDado) TotalBacklog() int {
 	return q.TotalAprovado() + q.TotalEmDesenvolvimento()
 }
 
 // TotalBacklogP retorna a soma de backlog problema
-func (q *Quadro) TotalBacklogP() int {
+func (q *ProjetoDado) TotalBacklogP() int {
 	return q.Aprovado.QtdProblema + q.EmDesenvolvimento.QtdProblema
 }
 
 // TotalBacklogM retorna a soma de backlog melhoria
-func (q *Quadro) TotalBacklogM() int {
+func (q *ProjetoDado) TotalBacklogM() int {
 	return q.Aprovado.QtdMelhoria + q.EmDesenvolvimento.QtdMelhoria
 }
 
 // TotalTeste retorna a soma de teste
-func (q *Quadro) TotalTeste() int {
+func (q *ProjetoDado) TotalTeste() int {
 	return q.TotalAgTeste() + q.TotalEmTeste()
 }
 
 // TotalTesteP retorna a soma de teste problema
-func (q *Quadro) TotalTesteP() int {
+func (q *ProjetoDado) TotalTesteP() int {
 	return q.AgTeste.QtdProblema + q.EmTeste.QtdProblema
 }
 
 // TotalTesteM retorna a soma de teste melhoria
-func (q *Quadro) TotalTesteM() int {
+func (q *ProjetoDado) TotalTesteM() int {
 	return q.AgTeste.QtdMelhoria + q.EmTeste.QtdMelhoria
 }
 
 // TotalAgMerge retorna a soma de ag merge
-func (q *Quadro) TotalAgMerge() int {
+func (q *ProjetoDado) TotalAgMerge() int {
 	return q.AgMerge.Total()
 }
 
 // Total retorna a soma de todos os indicadores
-func (q *Quadro) Total() int {
+func (q *ProjetoDado) Total() int {
 	return q.TotalBacklog() + q.TotalAgMerge() + q.TotalTeste()
 }
