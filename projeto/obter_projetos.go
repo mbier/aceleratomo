@@ -17,7 +17,7 @@ func GetProjetos() Projetos {
 	projetos = append(projetos, getProjetoSMOCTE())
 	projetos = append(projetos, getProjetoSMOFRETE())
 	projetos = append(projetos, getProjetoSMONET())
-	projetos = append(projetos, getProjetoTMSWEB())
+	projetos = append(projetos, getProjetoSMOTMS())
 
 	sort.Sort(projetos)
 
@@ -53,7 +53,7 @@ func getProjetoSMOFRETE() Projeto {
 	projeto.AgMergeFiltro = []int{13}
 	projeto.AgTesteFiltro = []int{10}
 	projeto.EmTesteFiltro = []int{11}
-	projeto.Grupo = FRETE
+	projeto.Grupo = PORTAL
 
 	return projeto
 }
@@ -66,14 +66,14 @@ func getProjetoADM() Projeto {
 	projeto.AgMergeFiltro = []int{13}
 	projeto.AgTesteFiltro = []int{10}
 	projeto.EmTesteFiltro = []int{11}
-	projeto.Grupo = ADM
+	projeto.Grupo = PORTAL
 
 	return projeto
 }
 
-func getProjetoTMSWEB() Projeto {
+func getProjetoSMOTMS() Projeto {
 	projeto := Projeto{}
-	projeto.Nome = "TMSWEB"
+	projeto.Nome = "SMOTMS"
 	projeto.URLAcelerato = "https://mosistemas.acelerato.com/api/demandas?projetos=4&categorias=15"
 	projeto.EmDesenvolvimentoFiltro = []int{18}
 	projeto.AgTesteFiltro = []int{19}
@@ -84,15 +84,28 @@ func getProjetoTMSWEB() Projeto {
 	return projeto
 }
 
+func getProjetoTMSWEB() Projeto {
+	projeto := Projeto{}
+	projeto.Nome = "TMSWEB"
+	projeto.URLAcelerato = "https://mosistemas.acelerato.com/api/demandas?projetos=2&categorias=15"
+	projeto.EmDesenvolvimentoFiltro = []int{18}
+	projeto.AgMergeFiltro = []int{13}
+	projeto.AgTesteFiltro = []int{10}
+	projeto.EmTesteFiltro = []int{11}
+	projeto.Grupo = PORTAL
+
+	return projeto
+}
+
 func getProjetoSMONET() Projeto {
 	projeto := Projeto{}
 	projeto.Nome = "SMONET"
-	projeto.URLAcelerato = "https://mosistemas.acelerato.com/api/demandas?projetos=4&categorias=22"
+	projeto.URLAcelerato = "https://mosistemas.acelerato.com/api/demandas?projetos=2&categorias=22"
 	projeto.EmDesenvolvimentoFiltro = []int{18}
 	projeto.AgTesteFiltro = []int{19}
 	projeto.EmTesteFiltro = []int{20}
 	projeto.AgMergeFiltro = []int{74}
-	projeto.Grupo = FLEX
+	projeto.Grupo = PORTAL
 
 	return projeto
 }
@@ -118,7 +131,7 @@ func getProjetoLogrev() Projeto {
 	projeto.AgMergeFiltro = []int{13}
 	projeto.AgTesteFiltro = []int{10}
 	projeto.EmTesteFiltro = []int{11}
-	projeto.Grupo = FRETE
+	projeto.Grupo = PORTAL
 
 	return projeto
 }
@@ -143,7 +156,7 @@ func getProjetoPortalLogin() Projeto {
 	projeto.AgMergeFiltro = []int{13}
 	projeto.AgTesteFiltro = []int{10}
 	projeto.EmTesteFiltro = []int{11}
-	projeto.Grupo = ADM
+	projeto.Grupo = PORTAL
 
 	return projeto
 }

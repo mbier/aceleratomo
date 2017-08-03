@@ -4,8 +4,7 @@ package projeto
 type Grupo int
 
 const (
-	ADM Grupo = iota
-	FRETE
+	PORTAL Grupo = iota
 	DELPHI
 	FLEX
 )
