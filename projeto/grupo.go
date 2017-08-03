@@ -13,12 +13,10 @@ const (
 func (g Grupo) ToString() string {
 	switch g {
 	case 0:
-		return "ADM"
+		return "PORTAL"
 	case 1:
-		return "FRETE"
-	case 2:
 		return "DELPHI"
-	case 3:
+	case 2:
 		return "FLEX"
 	}
 

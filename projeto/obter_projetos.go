@@ -18,6 +18,7 @@ func GetProjetos() Projetos {
 	projetos = append(projetos, getProjetoSMOFRETE())
 	projetos = append(projetos, getProjetoSMONET())
 	projetos = append(projetos, getProjetoSMOTMS())
+	projetos = append(projetos, getProjetoTMSWEB())
 
 	sort.Sort(projetos)
 
