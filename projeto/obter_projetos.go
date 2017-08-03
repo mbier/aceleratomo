@@ -61,7 +61,7 @@ func getProjetoSMOFRETE() Projeto {
 func getProjetoADM() Projeto {
 	projeto := Projeto{}
 	projeto.Nome = "ADM"
-	projeto.URLAcelerato = "https://mosistemas.acelerato.com/api/demandas?projetos=11&categorias=26"
+	projeto.URLAcelerato = "https://mosistemas.acelerato.com/api/demandas?projetos=2&categorias=26"
 	projeto.EmDesenvolvimentoFiltro = []int{9}
 	projeto.AgMergeFiltro = []int{13}
 	projeto.AgTesteFiltro = []int{10}
