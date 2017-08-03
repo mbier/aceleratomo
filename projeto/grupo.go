@@ -7,6 +7,9 @@ const (
 	PORTAL Grupo = iota
 	DELPHI
 	FLEX
+	ADM
+	FRETE
+	TMS
 )
 
 // ToString exibe o nome
@@ -18,6 +21,12 @@ func (g Grupo) ToString() string {
 		return "DELPHI"
 	case 2:
 		return "FLEX"
+	case 3:
+		return "ADM"
+	case 4:
+		return "FRETE"
+	case 5:
+		return "TMS"
 	}
 
 	return ""

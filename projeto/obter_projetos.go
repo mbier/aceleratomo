@@ -54,7 +54,7 @@ func getProjetoSMOFRETE() Projeto {
 	projeto.AgMergeFiltro = []int{13}
 	projeto.AgTesteFiltro = []int{10}
 	projeto.EmTesteFiltro = []int{11}
-	projeto.Grupo = PORTAL
+	projeto.Grupo = FRETE
 
 	return projeto
 }
@@ -67,7 +67,7 @@ func getProjetoADM() Projeto {
 	projeto.AgMergeFiltro = []int{13}
 	projeto.AgTesteFiltro = []int{10}
 	projeto.EmTesteFiltro = []int{11}
-	projeto.Grupo = PORTAL
+	projeto.Grupo = ADM
 
 	return projeto
 }
@@ -93,7 +93,7 @@ func getProjetoTMSWEB() Projeto {
 	projeto.AgMergeFiltro = []int{13}
 	projeto.AgTesteFiltro = []int{10}
 	projeto.EmTesteFiltro = []int{11}
-	projeto.Grupo = PORTAL
+	projeto.Grupo = TMS
 
 	return projeto
 }
