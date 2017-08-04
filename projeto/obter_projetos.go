@@ -101,11 +101,11 @@ func getProjetoTMSWEB() Projeto {
 func getProjetoSMONET() Projeto {
 	projeto := Projeto{}
 	projeto.Nome = "SMONET"
-	projeto.URLAcelerato = "https://mosistemas.acelerato.com/api/demandas?projetos=2&categorias=22"
-	projeto.EmDesenvolvimentoFiltro = []int{18}
-	projeto.AgTesteFiltro = []int{19}
-	projeto.EmTesteFiltro = []int{20}
-	projeto.AgMergeFiltro = []int{74}
+	projeto.URLAcelerato = "https://mosistemas.acelerato.com/api/demandas?projetos=2&categorias=21"
+	projeto.EmDesenvolvimentoFiltro = []int{9}
+	projeto.AgMergeFiltro = []int{13}
+	projeto.AgTesteFiltro = []int{10}
+	projeto.EmTesteFiltro = []int{11}
 	projeto.Grupo = PORTAL
 
 	return projeto
