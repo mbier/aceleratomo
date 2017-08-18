@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"sort"
+	"sync"
 
 	"github.com/mbier/aceleratomo/projeto"
 )
@@ -44,11 +46,13 @@ func getDemandasProjeto(projeto *projeto.Projeto) []Demanda {
 	return getDemandas(projeto.URLAcelerato)
 }
 
-// GerarDadosQuadro gera as informacoes do track
+// GerarDadosQuadro gera as informacoes do projeto
 func GerarDadosQuadro(projeto *projeto.Projeto) (quadro ProjetoDado) {
 	demandas := getDemandasProjeto(projeto)
 
 	quadro = gerarQuadro(demandas, *projeto)
+
+	quadro.Projeto = *projeto
 
 	return
 }
@@ -119,7 +123,7 @@ func gerarQuadro(demandas []Demanda, projeto projeto.Projeto) ProjetoDado {
 			if isRecusado {
 				quadro.AgMerge.QtdRecusado++
 			}
-		} else {
+		} else if arrayContains(demanda.KanbanStatus.KanbanStatusKey, projeto.AprovadoFiltro) {
 			if demanda.TipoDeTicket.TipoDeTicketKey == 3 {
 				quadro.Aprovado.QtdProblema++
 			} else {
@@ -131,10 +135,66 @@ func gerarQuadro(demandas []Demanda, projeto projeto.Projeto) ProjetoDado {
 			if isRecusado {
 				quadro.Aprovado.QtdRecusado++
 			}
+		} else if arrayContains(demanda.KanbanStatus.KanbanStatusKey, projeto.RecusadoFiltro) {
+			if demanda.TipoDeTicket.TipoDeTicketKey == 3 {
+				quadro.Recusado.QtdProblema++
+			} else {
+				quadro.Recusado.QtdMelhoria++
+			}
+			if isBlocante {
+				quadro.Recusado.QtdBlocante++
+			}
+			if isRecusado {
+				quadro.Recusado.QtdRecusado++
+			}
+		} else {
+			if demanda.TipoDeTicket.TipoDeTicketKey == 3 {
+				quadro.AgAprovacao.QtdProblema++
+			} else {
+				quadro.AgAprovacao.QtdMelhoria++
+			}
+			if isBlocante {
+				quadro.AgAprovacao.QtdBlocante++
+			}
+			if isRecusado {
+				quadro.AgAprovacao.QtdRecusado++
+			}
 		}
 	}
 
 	return quadro
+}
+
+// GerarDadosQuadros gera as informacoes dos projetos
+func GerarDadosQuadros() ProjetosDado {
+	projetos := projeto.GetProjetos()
+
+	ch := make(chan ProjetoDado, len(projetos))
+	wg := sync.WaitGroup{}
+
+	for _, p := range projetos {
+		wg.Add(1)
+		go func(projeto projeto.Projeto) {
+			quadro := GerarDadosQuadro(&projeto)
+			quadro.Projeto = projeto
+
+			defer wg.Done()
+
+			ch <- quadro
+		}(p)
+	}
+
+	wg.Wait()
+	close(ch)
+	var quadros ProjetosDado
+
+	for n := range ch {
+		quadros = append(quadros, n)
+	}
+
+	sort.Sort(quadros)
+
+	return quadros
 }
 
 func arrayContains(a int, list []int) bool {
@@ -144,4 +204,41 @@ func arrayContains(a int, list []int) bool {
 		}
 	}
 	return false
+}
+
+// GerarDadosQuadrosTeste gera as informacoes dos projetos
+func GerarDadosQuadrosTeste() ProjetosDado {
+
+	quadros := GerarDadosQuadros()
+
+	grupoProjetos := make(map[projeto.Grupo]ProjetoDado)
+
+	for _, q := range quadros {
+
+		quadroGrupo := grupoProjetos[q.Projeto.Grupo]
+
+		quadroGrupo.Projeto.Nome = q.Projeto.Grupo.ToString()
+
+		quadroGrupo.AgAprovacao.Merge(q.AgAprovacao)
+		quadroGrupo.Aprovado.Merge(q.Aprovado)
+		quadroGrupo.EmDesenvolvimento.Merge(q.EmDesenvolvimento)
+		quadroGrupo.AgMerge.Merge(q.AgMerge)
+		quadroGrupo.AgTeste.Merge(q.AgTeste)
+		quadroGrupo.EmTeste.Merge(q.EmTeste)
+		quadroGrupo.Recusado.Merge(q.Recusado)
+		quadroGrupo.QtdImpedimento += q.QtdImpedimento
+
+		grupoProjetos[q.Projeto.Grupo] = quadroGrupo
+	}
+
+	retorno := []ProjetoDado{}
+	for gp := range grupoProjetos {
+		dados := grupoProjetos[gp]
+		dados.Projeto.Nome = gp.ToString()
+		dados.Projeto.Grupo = gp
+
+		retorno = append(retorno, dados)
+	}
+
+	return retorno
 }

@@ -6,13 +6,15 @@ import (
 
 // ProjetoDado é objeto de retorno da demanda do acelerato
 type ProjetoDado struct {
-	Projeto           projeto.Projeto
-	Aprovado          CategoriaDado
-	EmDesenvolvimento CategoriaDado
-	AgMerge           CategoriaDado
-	QtdImpedimento    int
-	AgTeste           CategoriaDado
-	EmTeste           CategoriaDado
+	Projeto           projeto.Projeto `json:"projeto"`
+	AgAprovacao       CategoriaDado   `json:"agAprovacao"`
+	Aprovado          CategoriaDado   `json:"aprovado"`
+	EmDesenvolvimento CategoriaDado   `json:"emDesenvolvimento"`
+	AgMerge           CategoriaDado   `json:"agMerge"`
+	QtdImpedimento    int             `json:"qtdImpedimento"`
+	AgTeste           CategoriaDado   `json:"agTeste"`
+	EmTeste           CategoriaDado   `json:"emTeste"`
+	Recusado          CategoriaDado   `json:"recusado"`
 }
 
 // ProjetosDado lista de quadro

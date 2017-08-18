@@ -2,13 +2,15 @@ package projeto
 
 // Projeto do acelerato
 type Projeto struct {
-	Nome                    string
-	URLAcelerato            string
-	EmDesenvolvimentoFiltro []int
-	AgMergeFiltro           []int
-	AgTesteFiltro           []int
-	EmTesteFiltro           []int
-	Grupo                   Grupo
+	Nome                    string `json:"nome"`
+	URLAcelerato            string `json:"urlAcelerato"`
+	AprovadoFiltro          []int  `json:"aprocadoFiltro"`
+	EmDesenvolvimentoFiltro []int  `json:"emDesenvolvimentoFiltro"`
+	AgMergeFiltro           []int  `json:"agMergeFiltro"`
+	AgTesteFiltro           []int  `json:"agTesteFiltro"`
+	EmTesteFiltro           []int  `json:"emTesteFiltro"`
+	RecusadoFiltro          []int  `json:"recusadoFiltro"`
+	Grupo                   Grupo  `json:"grupo"`
 }
 
 // Projetos lista de projetos

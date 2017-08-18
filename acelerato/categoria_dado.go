@@ -2,10 +2,10 @@ package acelerato
 
 // CategoriaDado dados de cada projeto
 type CategoriaDado struct {
-	QtdProblema int
-	QtdBlocante int
-	QtdRecusado int
-	QtdMelhoria int
+	QtdProblema int `json:"qtdProblema"`
+	QtdBlocante int `json:"qtdBlocante"`
+	QtdRecusado int `json:"qtdRecusado"`
+	QtdMelhoria int `json:"qtdMelhoria"`
 }
 
 // NewCategoriaDado gerar um novo Categoria Dado

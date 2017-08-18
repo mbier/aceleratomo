@@ -1,5 +1,7 @@
 package projeto
 
+import "encoding/json"
+
 // Grupo representa o grupo de projeto
 type Grupo int
 
@@ -45,4 +47,8 @@ func (q Grupos) Less(i, j int) bool {
 
 func (q Grupos) Swap(i, j int) {
 	q[i], q[j] = q[j], q[i]
+}
+
+func (g *Grupo) MarshalJSON() ([]byte, error) {
+	return json.Marshal(g.ToString())
 }

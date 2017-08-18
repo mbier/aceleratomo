@@ -21,6 +21,9 @@ func main() {
 	e.GET("/quadro/geral", handlers.QuadroGeral)
 	e.GET("/quadro/testes", handlers.QuadroTestes)
 	e.GET("/quadro/:nome", handlers.Quadro)
+	e.GET("/api/projeto", handlers.APIProjetos)
+	e.GET("/api/projeto/teste", handlers.APIQuadroTeste)
+	e.GET("/api/projeto/:nome", handlers.APIProjeto)
 
 	port := os.Getenv("PORT")
 	if port == "" {
